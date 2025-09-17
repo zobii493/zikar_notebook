@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1009668325193",
+    "project_id": "shazli-notebook",
+    "storage_bucket": "shazli-notebook.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009668325193:android:d859f5754a2e5e68cbe498",
+        "android_client_info": {
+          "package_name": "com.example.naqashbandi_shazli"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBV677SHIjWAqhphSqqK_-5Jmf9b1qBvv8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

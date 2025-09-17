@@ -1,0 +1,2 @@
+C:/Users/Zohaib/StudioProjects/naqashbandi_shazli/android/app/.cxx/RelWithDebInfo/3n5i1u4g/x86/CMakeFiles/edit_cache.dir
+C:/Users/Zohaib/StudioProjects/naqashbandi_shazli/android/app/.cxx/RelWithDebInfo/3n5i1u4g/x86/CMakeFiles/rebuild_cache.dir
