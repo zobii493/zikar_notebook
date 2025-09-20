@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:naqashbandi_shazli/provider/bottom_nav_provider.dart';
 import 'package:naqashbandi_shazli/provider/counter_provider.dart';
 import 'package:naqashbandi_shazli/provider/fezunoor_provider.dart';
 import 'package:naqashbandi_shazli/provider/ismezat_kalmasharif_provider.dart';
@@ -45,7 +46,12 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => FezuNoorProvider(),
         ),
-        ChangeNotifierProvider(create: (_)=>ProgressProvider(),),
+        ChangeNotifierProvider(
+          create: (_) => ProgressProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => BottomNavProvider(),
+        ),
       ],
       child: MyApp(
         isFirstLaunch: isFirstLaunch,
@@ -69,10 +75,7 @@ class MyApp extends StatelessWidget {
     if (isFirstLaunch) {
       homeWidget = Welcome(); // Pehli dafa open
     } else if (isLoggedIn) {
-      homeWidget = BottomNavBar(
-        selectedIndex: 0,
-        onTabChange: (index) {},
-      ); // User already login hai
+      homeWidget = BottomNavBar(); // User already login hai
     } else {
       homeWidget = Login(); // Logout hone ke baad
     }
@@ -83,4 +86,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
