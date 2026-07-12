@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:naqashbandi_shazli/core/app_colors.dart';
 import 'package:naqashbandi_shazli/provider/bottom_nav_provider.dart';
 import 'package:naqashbandi_shazli/provider/counter_provider.dart';
 import 'package:naqashbandi_shazli/provider/fezunoor_provider.dart';
@@ -82,6 +83,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      color: AppColors.ivoryColor,
       home: homeWidget,
     );
   }

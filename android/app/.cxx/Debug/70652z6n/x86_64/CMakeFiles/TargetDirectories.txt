@@ -1,2 +1,0 @@
-C:/Users/Zohaib/StudioProjects/naqashbandi_shazli/android/app/.cxx/Debug/70652z6n/x86_64/CMakeFiles/edit_cache.dir
-C:/Users/Zohaib/StudioProjects/naqashbandi_shazli/android/app/.cxx/Debug/70652z6n/x86_64/CMakeFiles/rebuild_cache.dir

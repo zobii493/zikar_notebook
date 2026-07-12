@@ -11,7 +11,6 @@ import 'package:naqashbandi_shazli/screens/profile_screen/faqs.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../registrations_screens/login.dart';
-import '../counter_screen/counter.dart';
 import 'package:path/path.dart' as path;
 
 import '../../widgets/top_curve_shade.dart';
@@ -369,8 +368,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 builder: (context) => HelpSupportPage()));
                       },
                       child: ProfileOption(
-                        // icon: FontAwesomeIcons.info,
-                        icon: HugeIcons.strokeRoundedCustomerSupport,
+                        icon: FontAwesomeIcons.info,
                         text: 'Help & Support',
                         onPressed: () {
                           Navigator.push(
@@ -399,7 +397,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 class ProfileOption extends StatelessWidget {
-  final IconData icon;
+  final FaIconData icon;
   final String text;
   final VoidCallback? onPressed;
 
@@ -425,7 +423,7 @@ class ProfileOption extends StatelessWidget {
             const SizedBox(
               width: 10,
             ),
-            Icon(
+            FaIcon(
               icon,
               size: 24,
               color: Colors.black26,

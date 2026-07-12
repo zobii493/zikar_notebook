@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:naqashbandi_shazli/PdfView/fayzunnoor_pdf.dart';
 
+import '../../core/app_colors.dart';
+
 class BookCard extends StatelessWidget {
   final String title;
   final String pdfPath;
@@ -22,15 +24,12 @@ class BookCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Fayzunoorpdf(
-              path: pdfPath,
-              title: pdfTitle,
-            ),
+            builder: (context) => Fayzunoorpdf(path: pdfPath, title: pdfTitle),
           ),
         );
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           image: DecorationImage(
@@ -42,43 +41,55 @@ class BookCard extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: Colors.black.withOpacity(0.3), // dark overlay for readability
+            color: Colors.black.withOpacity(
+              0.3,
+            ), // dark overlay for readability
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text(
-                title,
+                'FEATURED READING',
                 style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+                  color: AppColors.antiqueGoldColor,
+                  fontSize: 14,
+                  fontFamily: "PlusJakartaSans",
+                ),
+              ),
+              Align(
+                alignment: .centerRight,
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Amiri',
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   elevation: 10,
-                  backgroundColor: Colors.amber.shade300,
+                  backgroundColor: AppColors.antiqueGoldColor,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Fayzunoorpdf(
-                        path: pdfPath,
-                        title: pdfTitle,
-                      ),
+                      builder: (context) =>
+                          Fayzunoorpdf(path: pdfPath, title: pdfTitle),
                     ),
                   );
                 },
                 child: const Text(
                   'Read More',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: AppColors.emeraldDeepColor,
                     fontSize: 18,
                   ),
                 ),
