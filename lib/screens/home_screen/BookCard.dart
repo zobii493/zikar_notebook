@@ -71,7 +71,6 @@ class BookCard extends StatelessWidget {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  elevation: 10,
                   backgroundColor: AppColors.antiqueGoldColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
@@ -90,7 +89,9 @@ class BookCard extends StatelessWidget {
                   'Read More',
                   style: TextStyle(
                     color: AppColors.emeraldDeepColor,
-                    fontSize: 18,
+                    fontSize: 16,
+                    fontFamily: 'PlusJakartaSans',
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

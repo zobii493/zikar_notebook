@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:naqashbandi_shazli/core/app_colors.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class CustomProgressCard extends StatelessWidget {
   final String title;
-  final FaIconData icon;
-  final Color iconColor;
+  final FaIconData? icon;
+  final Color? iconColor;
+  final String? svgAsset;
   final Color iconBackColor;
   final double progressPercentage;
   final Color backgroundcolor;
@@ -14,8 +16,9 @@ class CustomProgressCard extends StatelessWidget {
 
   CustomProgressCard({
     required this.title,
-    required this.icon,
-    required this.iconColor,
+    this.icon,
+    this.iconColor,
+    this.svgAsset,
     required this.iconBackColor,
     required this.progressPercentage,
     required this.backgroundcolor,
@@ -44,11 +47,17 @@ class CustomProgressCard extends StatelessWidget {
                 ),
                 width: 40,
                 height: 40,
-                child: Center(
-                  child: FaIcon(
+                child:  Center(
+                  child: svgAsset != null
+                      ? SvgPicture.asset(
+                    svgAsset!,
+                    width: 22,
+                    height: 22,
+                  )
+                      : FaIcon(
                     icon,
                     color: iconColor,
-                    size: 24,
+                    size: 22,
                   ),
                 ),
               ),

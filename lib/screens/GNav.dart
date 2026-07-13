@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:naqashbandi_shazli/screens/journey_screen/journey.dart';
 import 'package:provider/provider.dart';
 import 'package:naqashbandi_shazli/screens/counter_screen/counter.dart';
 import 'package:naqashbandi_shazli/screens/profile_screen/profile_info.dart';
@@ -11,6 +13,7 @@ class BottomNavBar extends StatelessWidget {
   final List<Widget> _screens = [
     MyFrontPage(),
     CounterPage(),
+    Journey(),
     ProfilePage(),
   ];
 
@@ -32,48 +35,67 @@ class BottomNavBar extends StatelessWidget {
       child: Scaffold(
         body: _screens[bottomNavProvider.selectedIndex],
         bottomNavigationBar: Container(
-          height: 90,
+          height: 80,
           color: AppColors.ivoryColor,
-          padding: EdgeInsets.all(8),
+          padding: EdgeInsets.symmetric(horizontal: 28,vertical: 8),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(40),
             child: GNav(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              backgroundColor: Colors.black,
+              backgroundColor: AppColors.emeraldDeepColor,
               rippleColor: Colors.grey.shade800,
               haptic: true,
               tabBorderRadius: 15,
-              tabActiveBorder: Border.all(color: Colors.black, width: 1,),
-              tabBorder: Border.all(color: Colors.black, width: 1),
-              tabShadow: [BoxShadow(color: Colors.white24)],
+              tabShadow: [BoxShadow(color: AppColors.emeraldColor.withValues(alpha: 0.8))],
               curve: Curves.fastOutSlowIn,
               gap: 1,
               color: Colors.white,
               activeColor: Colors.black,
-              iconSize: 30,
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               selectedIndex: bottomNavProvider.selectedIndex,
               onTabChange: (index) {
                 bottomNavProvider.changeIndex(index);
               },
               tabs: [
                 GButton(
-                  icon: Icons.home,
+                  leading: SvgPicture.asset(
+                    'assets/icons/home.svg',
+                    width: 20,
+                    height: 20,
+                  ),
                   text: 'Home',
                   backgroundColor: AppColors.antiqueGoldColor,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(35),
                 ),
                 GButton(
-                  icon: Icons.calculate,
+                  leading: SvgPicture.asset(
+                    'assets/icons/beads.svg',
+                    width: 22,
+                    height: 22,
+                  ),
                   text: 'Counter',
                   backgroundColor: AppColors.antiqueGoldColor,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(35),
                 ),
                 GButton(
-                  icon: Icons.person,
+                  leading: SvgPicture.asset(
+                    'assets/icons/journey.svg',
+                    width: 22,
+                    height: 22,
+                  ),
+                  text: 'Journey',
+                  backgroundColor: AppColors.antiqueGoldColor,
+                  borderRadius: BorderRadius.circular(35),
+                ),
+                GButton(
+                  leading: SvgPicture.asset(
+                    'assets/icons/user.svg',
+                    width: 22,
+                    height: 22,
+                  ),
                   text: 'Profile',
                   backgroundColor: AppColors.antiqueGoldColor,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(35),
                 ),
               ],
             ),

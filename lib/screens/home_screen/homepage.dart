@@ -109,7 +109,7 @@ class _MyFrontPageState extends State<MyFrontPage> {
                               color: Colors.white24,
                             ),
                             child: const Icon(
-                              Icons.notifications_none,
+                              Icons.notifications,
                               color: Colors.amber,
                             ),
                           ),
@@ -186,8 +186,7 @@ class _MyFrontPageState extends State<MyFrontPage> {
               children: [
                 CustomProgressCard(
                   title: 'شازلی ازکار',
-                  icon: FontAwesomeIcons.scroll,
-                  iconColor: Colors.pink.shade300,
+                  svgAsset: "assets/icons/list.svg",
                   iconBackColor: Colors.pink.shade50,
                   progressPercentage: progressProvider.fezuNoorProgress,
                   onTap: () async {
@@ -200,9 +199,8 @@ class _MyFrontPageState extends State<MyFrontPage> {
                   backgroundcolor: Colors.pink.shade700,
                 ),
                 CustomProgressCard(
-                  title: 'شازلی ازکار',
-                  icon: FontAwesomeIcons.bookOpen,
-                  iconColor: AppColors.antiqueGoldColor,
+                  title: 'اَسْمَاءُ الْحُسْنٰی',
+                  svgAsset: "assets/icons/book.svg",
                   iconBackColor: AppColors.antiqueGoldColor.withValues(alpha: 0.2),
                   progressPercentage: progressProvider.fezuNoorProgress,
                   onTap: () async {
