@@ -6,7 +6,7 @@ import '../../core/app_colors.dart';
 import '../../model/profile_model.dart';
 import '../../provider/profile_vm.dart';
 import '../../registrations_screens/login.dart';
-import '../../widgets/top_curve_shade.dart';
+import '../../widgets/custom_paint.dart';
 import 'helps_supports.dart';
 
 class ProfilePage extends StatelessWidget {

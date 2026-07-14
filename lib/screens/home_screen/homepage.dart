@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:naqashbandi_shazli/screens/home_screen/FezuNoor.dart';
 import 'package:naqashbandi_shazli/widgets/CustomCard.dart';
-import 'package:naqashbandi_shazli/widgets/top_curve_shade.dart';
+import 'package:naqashbandi_shazli/widgets/custom_paint.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../pdfview/fayzunnoor_pdf.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../provider/progressbar_provider.dart';
-import 'BookCard.dart';
+import '../../repositories/auth_repository.dart';
+import 'widgets/bookcard.dart';
 import 'ismezat.dart';
 import 'kalmashareef.dart';
 
@@ -22,9 +23,34 @@ class MyFrontPage extends StatefulWidget {
 class _MyFrontPageState extends State<MyFrontPage> {
 
   final PageController _pageController = PageController(initialPage: 0,viewportFraction: 0.98);
+  final AuthRepository _authRepository = AuthRepository();
   double progressPercentage = 0.0;
   double completedIsmeZatPercentage = 0;
   double completedkalmaSharifPercentage = 0;
+  String username = "";
+  bool isLoadingUsername = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    final user = _authRepository.currentUser;
+
+    if (user == null) return;
+
+    final fetchedUsername =
+    await _authRepository.fetchUsername(user.uid);
+
+    if (!mounted) return;
+
+    setState(() {
+      username = fetchedUsername ?? "User";
+      isLoadingUsername = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +100,10 @@ class _MyFrontPageState extends State<MyFrontPage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(top: 40.0),
-                            child: const Column(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   "ASSALAMU ALAIKUM",
                                   style: TextStyle(
                                     color: Colors.white70,
@@ -87,10 +113,10 @@ class _MyFrontPageState extends State<MyFrontPage> {
                                     fontFamily: 'PlusJakartaSans'
                                   ),
                                 ),
-                                SizedBox(height: 5),
+                                const SizedBox(height: 5),
                                 Text(
-                                  "Zohaib Hassan",
-                                  style: TextStyle(
+                                  isLoadingUsername ? "Loading..." : username,
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -101,18 +127,18 @@ class _MyFrontPageState extends State<MyFrontPage> {
                             ),
                           ),
 
-                          Container(
-                            width: 42,
-                            height: 42,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white24,
-                            ),
-                            child: const Icon(
-                              Icons.notifications,
-                              color: Colors.amber,
-                            ),
-                          ),
+                          // Container(
+                          //   width: 42,
+                          //   height: 42,
+                          //   decoration: BoxDecoration(
+                          //     shape: BoxShape.circle,
+                          //     color: Colors.white24,
+                          //   ),
+                          //   child: const Icon(
+                          //     Icons.notifications,
+                          //     color: Colors.amber,
+                          //   ),
+                          // ),
                         ],
                       ),
                     ],

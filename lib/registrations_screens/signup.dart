@@ -1,428 +1,178 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:loading_indicator/loading_indicator.dart';
-import 'package:naqashbandi_shazli/widgets/top_snack_bar.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
-import '../widgets/top_curve_shade.dart';
+import 'package:naqashbandi_shazli/registrations_screens/widgets/auth_gradient_button.dart';
+import 'package:naqashbandi_shazli/registrations_screens/widgets/auth_header.dart';
+import 'package:naqashbandi_shazli/registrations_screens/widgets/auth_textfield.dart';
+import 'package:naqashbandi_shazli/registrations_screens/widgets/bismillah_banner.dart';
+import 'package:provider/provider.dart';
+import '../core/app_colors.dart';
+import '../utils/responsive.dart';
+import '../utils/snackbar_utils.dart';
+import '../viewmodels/signup_viewmodel.dart';
 import 'email_verification.dart';
 
-class Signup extends StatefulWidget {
+class Signup extends StatelessWidget {
+  const Signup({super.key});
+
   @override
-  State<Signup> createState() => _SignupState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => SignupViewModel(),
+      child: const _SignupView(),
+    );
+  }
 }
 
-class _SignupState extends State<Signup> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmpasswordController =
-      TextEditingController();
+class _SignupView extends StatelessWidget {
+  const _SignupView();
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  Future<void> _signUp(BuildContext context) async {
+    final viewModel = context.read<SignupViewModel>();
+    final result = await viewModel.signUp();
 
-  bool _passwordVisible = false;
-  bool _ConfirmpasswordVisible = false;
-  bool _isLoading = false; // Loading state
+    if (!context.mounted) return;
 
-  String? _errorMessage;
-
-  Future<bool> isEmailValid(String email) async {
-    final apiKey = '1e0e9911817b47c69d39d7b9b6a13616';  // Replace with your email verification API key
-    final response = await http.get(
-      Uri.parse('https://emailvalidation.abstractapi.com/v1/?api_key=$apiKey&email=$email'),
-    );
-
-    if (response.statusCode == 200) {
-      final jsonResponse = json.decode(response.body);
-      return jsonResponse['deliverable'];  // true if the email exists
-    } else {
-      return false;  // Something went wrong, assume email is invalid
+    if (result.success) {
+      context.showTopSnackBar(
+        result.message ?? 'Account created successfully!',
+        AppColors.antiqueGoldColor,
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const EmailVerificationPage()),
+      );
     }
-  }
-
-  void _showSnackBar(String message, Color color) {
-    final overlay = Overlay.of(context);
-    final overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: MediaQuery.of(context).padding.top,
-        left: 8,
-        right: 8,
-        child: TopSnackBar(
-          message: message,
-          backgroundColor: color,
-        ),
-      ),
-    );
-
-    overlay.insert(overlayEntry);
-    Future.delayed(Duration(seconds: 3), () {
-      overlayEntry.remove();
-    });
+    // Field-level errorMessage is shown inline below the form by the
+    // ViewModel's `errorMessage`, matching the original behaviour.
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<SignupViewModel>();
+
     return Scaffold(
-      body: Stack(
+      backgroundColor: AppColors.ivoryColor,
+      body: ListView(
+        padding: EdgeInsets.zero,
         children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 200,
-            // Adjust height as needed
-            child: ClipPath(
-              clipper: FullWidthWavyTopRightClipper(),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blueAccent, Colors.purpleAccent],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 80.0, right: 20, left: 20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Text(
-                      'Sign up',
-                      style: TextStyle(
-                        fontSize: 50,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'AutourOne',
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    DefaultTextStyle(style: TextStyle(fontSize: 16,fontFamily: 'AutourOne',color: Colors.black),
-                      child: AnimatedTextKit(
-                        animatedTexts: [
-                          WavyAnimatedText('Create an account..'),
-                        ],
-                        isRepeatingAnimation: true,
-                      ),),
-                    SizedBox(height: 30),
-                    TextFormField(
-                      controller: _usernameController,
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        labelText: 'Username',
-                        alignLabelWithHint: true,
-                        labelStyle: TextStyle(
-                          color: Colors.black,
-                        ),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.only(left: 10.0, top: 10),
-                          child: FaIcon(
-                            FontAwesomeIcons.solidUser,
-                            color: Colors.grey.shade400,
-                          ),
-                        ),
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your username';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: _emailController,
-                      cursorColor: Colors.black,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        alignLabelWithHint: true,
-                        labelStyle: TextStyle(
-                          color: Colors.black,
-                        ),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.only(left: 10, top: 12),
-                          child: FaIcon(
-                            FontAwesomeIcons.solidEnvelope,
-                            color: Colors.grey.shade400,
-                          ),
-                        ),
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}')
-                            .hasMatch(value)) {
-                          return 'Please enter a valid email address';
-                        }
-                        if(!value.endsWith('@gmail.com')){
-                          return 'Please use a Gmail address';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: !_passwordVisible,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                        focusColor: Colors.black,
-                        floatingLabelStyle: TextStyle(color: Colors.black),
-                        labelText: 'Password',
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.only(left: 10, top: 10),
-                          child: FaIcon(
-                            FontAwesomeIcons.lock,
-                            color: Colors.grey.shade400,
-                          ),
-                        ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.only(
-                            top: 10.0,
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _passwordVisible = !_passwordVisible;
-                              });
-                            },
-                            icon: FaIcon(
-                              _passwordVisible
-                                  ? FontAwesomeIcons.solidEye
-                                  : FontAwesomeIcons.solidEyeSlash,
-                              color: Colors.black26,
-                            ),
-                          ),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: _confirmpasswordController,
-                      cursorColor: Colors.black,
-                      obscureText: !_ConfirmpasswordVisible,
-                      decoration: InputDecoration(
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                        focusColor: Colors.black,
-                        floatingLabelStyle: TextStyle(color: Colors.black),
-                        labelText: 'Confirm Password',
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.only(left: 10, top: 10),
-                          child: FaIcon(
-                            FontAwesomeIcons.lock,
-                            color: Colors.grey.shade400,
-                          ),
-                        ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.only(
-                            top: 10.0,
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _ConfirmpasswordVisible =
-                                    !_ConfirmpasswordVisible;
-                              });
-                            },
-                            icon: FaIcon(
-                              _ConfirmpasswordVisible
-                                  ? FontAwesomeIcons.solidEye
-                                  : FontAwesomeIcons.solidEyeSlash,
-                              color: Colors.black26,
-                            ),
-                          ),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please confirm your password';
-                        }
-                        if (value != _passwordController.text) {
-                          return 'Passwords do not match';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 80),
-                    if (_errorMessage != null) ...[
-                      // SizedBox(height: 20),
-                      Text(
-                        _errorMessage!,
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ],
-                    MaterialButton(
-                      elevation: 10,
-                      height: 60,
-                      minWidth: double.infinity,
-                      color: Colors.blue,
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            _isLoading = true; // Show loading indicator
-                          });
+          const AuthHeader(label: 'JOIN US', title: 'Create Account'),
+          Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: context.maxContentWidth),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Form(
+                  key: viewModel.formKey,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 22),
+                      const BismillahBanner(),
+                      const SizedBox(height: 26),
 
-                          String email = _emailController.text.trim();
-                          String password = _passwordController.text.trim();
-                          String username = _usernameController.text.trim();
-
-                          try {
-                            /*bool isValidEmail = await isEmailValid(email);
-                            if (!isValidEmail) {
-                              // Step 2: If email is invalid, show an error and return
-                              setState(() {
-                                _errorMessage = 'This email does not exist. Please enter a valid email.';
-                              });
-                              setState(() {
-                                _isLoading = false; // Hide loading indicator
-                              });
-                              return;
-                            }*/
-                            UserCredential userCredential = await FirebaseAuth
-                                .instance
-                                .createUserWithEmailAndPassword(
-                              email: email,
-                              password: password,
-                            );
-                            User? user = userCredential.user;
-                            if (user != null) {
-                              if(!email.endsWith('@gmail.com')){
-                                await user.delete();
-                                setState(() {
-                                  _errorMessage='Please use a Gmail address.';
-                                });
-                                return;
-                              }
-                              await user.sendEmailVerification();
-                              await FirebaseFirestore.instance
-                                  .collection('users')
-                                  .doc(user.uid)
-                                  .set({
-                                'uid': user.uid,
-                                'email': email,
-                                'username': username,
-                                'created_at': FieldValue.serverTimestamp(),
-                              });
-                              _showSnackBar('Account created successfully!',
-                                  Colors.amber.shade300);
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        EmailVerificationPage()), // Navigate to Login page
-                              );
-                            }
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'weak-password') {
-                              setState(() {
-                                _errorMessage =
-                                    'The password provided is too weak.';
-                              });
-                            } else if (e.code == 'email-already-in-use') {
-                              setState(() {
-                                _errorMessage =
-                                    'The account already exists for that email.';
-                              });
-                            }
-                          } catch (e) {
-                            setState(() {
-                              _errorMessage =
-                                  'An error occurred. Please try again.';
-                            });
-                          } finally {
-                            setState(() {
-                              _isLoading = false; // Hide loading indicator
-                            });
-                          }
-                        }
-                      },
-                      child: _isLoading
-                          ? SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: LoadingIndicator(
-                              indicatorType: Indicator.ballSpinFadeLoader,
-                              // Required
-                              colors: const [Colors.amber, Colors.purple],
-                              // Optional
-                              strokeWidth: 0, // Optional
-                            ),
-                          )
-                          : Text(
-                              'Sign up',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                      AuthTextField(
+                        controller: viewModel.usernameController,
+                        hint: 'Username',
+                        icon: FontAwesomeIcons.solidUser,
+                        iconBg: AppColors.emeraldDeepColor,
+                        keyboardType: TextInputType.name,
+                        validator: viewModel.validateUsername,
                       ),
-                    ),
-                    SizedBox(height: 70),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Already have an account?'),
-                        InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            'Login',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
+                      const SizedBox(height: 16),
+
+                      AuthTextField(
+                        controller: viewModel.emailController,
+                        hint: 'Email',
+                        icon: FontAwesomeIcons.solidEnvelope,
+                        iconBg: Colors.blue,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: viewModel.validateEmail,
+                      ),
+                      const SizedBox(height: 16),
+
+                      AuthTextField(
+                        controller: viewModel.passwordController,
+                        hint: 'Password',
+                        icon: FontAwesomeIcons.lock,
+                        iconBg: AppColors.antiqueGoldColor,
+                        obscureText: !viewModel.passwordVisible,
+                        suffixIcon: IconButton(
+                          onPressed: viewModel.togglePasswordVisibility,
+                          icon: FaIcon(
+                            viewModel.passwordVisible
+                                ? FontAwesomeIcons.solidEye
+                                : FontAwesomeIcons.solidEyeSlash,
+                            color: Colors.black26,
+                            size: 18,
+                          ),
+                        ),
+                        validator: viewModel.validatePassword,
+                      ),
+                      const SizedBox(height: 16),
+
+                      AuthTextField(
+                        controller: viewModel.confirmPasswordController,
+                        hint: 'Confirm Password',
+                        icon: FontAwesomeIcons.lock,
+                        iconBg: AppColors.maroonColor,
+                        obscureText: !viewModel.confirmPasswordVisible,
+                        suffixIcon: IconButton(
+                          onPressed: viewModel.toggleConfirmPasswordVisibility,
+                          icon: FaIcon(
+                            viewModel.confirmPasswordVisible
+                                ? FontAwesomeIcons.solidEye
+                                : FontAwesomeIcons.solidEyeSlash,
+                            color: Colors.black26,
+                            size: 18,
+                          ),
+                        ),
+                        validator: viewModel.validateConfirmPassword,
+                      ),
+
+                      if (viewModel.errorMessage != null) ...[
+                        const SizedBox(height: 14),
+                        Text(
+                          viewModel.errorMessage!,
+                          style: const TextStyle(
+                            color: AppColors.maroonColor,
+                            fontFamily: 'PlusJakartaSans',
                           ),
                         ),
                       ],
-                    ),
-                  ],
+
+                      const SizedBox(height: 26),
+                      AuthGradientButton(
+                        label: 'Sign up',
+                        isLoading: viewModel.isLoading,
+                        onTap: () => _signUp(context),
+                      ),
+                      const SizedBox(height: 24),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Already have an account? ',
+                            style: TextStyle(
+                              fontFamily: 'PlusJakartaSans',
+                              color: Colors.black54,
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(
+                                fontFamily: 'PlusJakartaSans',
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.emeraldDeepColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+                    ],
+                  ),
                 ),
               ),
             ),

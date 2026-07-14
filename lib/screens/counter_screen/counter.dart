@@ -5,7 +5,7 @@ import 'package:naqashbandi_shazli/provider/counter_provider.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../widgets/top_snack_bar.dart';
-import '../../widgets/top_curve_shade.dart';
+import '../../widgets/custom_paint.dart';
 import 'package:vibration/vibration.dart';
 
 class CounterPage extends StatefulWidget {

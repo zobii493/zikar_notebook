@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:naqashbandi_shazli/PdfView/fayzunnoor_pdf.dart';
 
-import '../../core/app_colors.dart';
+import '../../../core/app_colors.dart';
 
 class BookCard extends StatelessWidget {
   final String title;

@@ -1,109 +1,84 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:loading_indicator/loading_indicator.dart';
-import 'package:lottie/lottie.dart';
-import '../widgets/top_snack_bar.dart';
-import '../widgets/top_curve_shade.dart';
-import 'login.dart';
+import 'package:naqashbandi_shazli/registrations_screens/widgets/auth_gradient_button.dart';
+import 'package:naqashbandi_shazli/registrations_screens/widgets/auth_header.dart';
+import 'package:naqashbandi_shazli/registrations_screens/widgets/auth_textfield.dart';
+import 'package:provider/provider.dart';
+import '../core/app_colors.dart';
+import '../utils/responsive.dart';
+import '../utils/snackbar_utils.dart';
+import '../viewmodels/forgot_password_viewmodel.dart';
 
-class Forgotpassword extends StatefulWidget {
+class Forgotpassword extends StatelessWidget {
   const Forgotpassword({super.key});
 
   @override
-  State<Forgotpassword> createState() => _ForgotpasswordState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => ForgotPasswordViewModel(),
+      child: const _ForgotPasswordView(),
+    );
+  }
 }
 
-class _ForgotpasswordState extends State<Forgotpassword> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  bool _isLoading = false;
+class _ForgotPasswordView extends StatelessWidget {
+  const _ForgotPasswordView();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  Future<void> _submit(BuildContext context) async {
+    final viewModel = context.read<ForgotPasswordViewModel>();
+    final result = await viewModel.resetPassword();
 
-  void _showSnackBar(String message, Color color) {
-    final overlay = Overlay.of(context);
-    final overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: MediaQuery.of(context).padding.top,
-        left: 8,
-        right: 8,
-        child: TopSnackBar(
-          message: message,
-          backgroundColor: color,
-        ),
-      ),
-    );
+    if (!context.mounted) return;
 
-    overlay.insert(overlayEntry);
-    Future.delayed(Duration(seconds: 3), () {
-      overlayEntry.remove();
-    });
-  }
-
-  // Function to send password reset email
-  Future<void> _resetPassword(String email) async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-      await _auth.sendPasswordResetEmail(email: email);
-      setState(() {
-        _isLoading = false;
-      });
-
-      // Show success dialog after email is sent
-      _showResetPasswordDialog();
-
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      _showSnackBar('Error: ${e.toString()}', Colors.red);
+    if (result.success) {
+      _showResetPasswordDialog(context);
+    } else if (result.message != null) {
+      context.showTopSnackBar(result.message!, AppColors.maroonColor);
     }
   }
 
-  // Function to validate and handle form submission
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      String email = _emailController.text.trim();
-
-      // Trigger password reset
-      _resetPassword(email);
-    }
-  }
-
-  // Function to show a dialog box after email is sent
-  void _showResetPasswordDialog() {
+  void _showResetPasswordDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (dialogContext) {
         return AlertDialog(
-          title: Text("Password Reset Email Sent"),
-          content: Text(
-              "We have sent a password reset email. Please check your inbox and follow the instructions to reset your password."),
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text(
+            'Email Sent',
+            style: TextStyle(
+              fontFamily: 'PlusJakartaSans',
+              fontWeight: FontWeight.bold,
+              color: AppColors.emeraldDeepColor,
+            ),
+          ),
+          content: const Text(
+            'We have sent a password reset email. Please check your inbox and follow the instructions to reset your password.',
+            style: TextStyle(fontFamily: 'PlusJakartaSans'),
+          ),
           actions: [
-            Center(
-              child: Container(
-                width: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.blue,
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  Navigator.of(dialogContext).pop(); // back to Login
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.emeraldDeepColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                    // Navigate to the login page
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              Login()), // Replace with your login page
-                    );
-                  },
-                  child: Text(
-                    "OK",
-                    style: TextStyle(color: Colors.white),
+                child: const Text(
+                  'OK',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'PlusJakartaSans',
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -116,119 +91,128 @@ class _ForgotpasswordState extends State<Forgotpassword> {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<ForgotPasswordViewModel>();
+
     return Scaffold(
-      body: Stack(
+      backgroundColor: AppColors.ivoryColor,
+      body: ListView(
+        padding: EdgeInsets.zero,
         children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 200,
-            // Adjust height as needed
-            child: ClipPath(
-              clipper: FullWidthWavyTopRightClipper(),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blueAccent, Colors.purpleAccent],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-              ),
-            ),
+          const AuthHeader(
+            label: 'RESET ACCESS',
+            title: 'Forgot Password',
+            showBack: false,
           ),
-          SingleChildScrollView(
-            child: Form(
-              key: _formKey, // Add form key for validation
+          Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: context.maxContentWidth),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  children: [
-                    SizedBox(height: 60,),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: FaIcon(FontAwesomeIcons.angleLeft, color: Colors.white),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
+                padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                child: Form(
+                  key: viewModel.formKey,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 28,
+                      vertical: 35,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(32),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.emeraldDeepColor.withOpacity(.08),
+                          blurRadius: 35,
+                          spreadRadius: 3,
+                          offset: const Offset(0, 15),
                         ),
-                        SizedBox(width: 30,),
-                        Text(
-                          'Forgot Password',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontFamily: 'AutourOne',
+                      ],
+                      border: Border.all(
+                        color: AppColors.emeraldDeepColor.withOpacity(.08),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        /// Icon
+                        Container(
+                          height: 85,
+                          width: 85,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.emeraldDeepColor,
+                                AppColors.antiqueGoldColor,
+                              ],
+                            ),
                           ),
+                          child: Center(
+                            child: const FaIcon(
+                              FontAwesomeIcons.envelopeOpenText,
+                              color: Colors.white,
+                              size: 34,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 28),
+
+                        const Text(
+                          "Reset Your Account Access",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: "PlusJakartaSans",
+                            fontSize: 25,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.emeraldDeepColor,
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        Container(
+                          width: 60,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: AppColors.antiqueGoldColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        const Text(
+                          "Enter the email address associated with your account. "
+                          "We'll send you a secure link to reset your password and restore access.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: "PlusJakartaSans",
+                            fontSize: 15,
+                            height: 1.7,
+                            color: Colors.black54,
+                          ),
+                        ),
+
+                        const SizedBox(height: 35),
+
+                        AuthTextField(
+                          controller: viewModel.emailController,
+                          hint: "Email Address",
+                          icon: FontAwesomeIcons.solidEnvelope,
+                          iconBg: AppColors.antiqueGoldColor,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: viewModel.validateEmail,
+                        ),
+
+                        const SizedBox(height: 38),
+
+                        AuthGradientButton(
+                          label: "Send Reset Link",
+                          isLoading: viewModel.isLoading,
+                          onTap: () => _submit(context),
                         ),
                       ],
                     ),
-                    SizedBox(height: 20,),
-                    Lottie.asset('assets/loti2.json'),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: _emailController,
-                      cursorColor: Colors.black,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        alignLabelWithHint: true,
-                        labelStyle: TextStyle(color: Colors.black),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.only(left: 10, top: 12),
-                          child: FaIcon(FontAwesomeIcons.solidEnvelope,
-                              color: Colors.grey.shade400),
-                        ),
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 50),
-                    MaterialButton(
-                      height: 60,
-                      minWidth: double.infinity,
-                      onPressed: _submit,
-                      color: Colors.blue,
-                      elevation: 10,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: _isLoading
-                          ? SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: LoadingIndicator(
-                                indicatorType: Indicator.ballSpinFadeLoader,
-                                // Required
-                                colors: const [Colors.amber, Colors.purple],
-                                // Optional
-                                strokeWidth: 0, // Optional
-                              ),
-                            )
-                          : Text(
-                              'Send Email',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -236,11 +220,5 @@ class _ForgotpasswordState extends State<Forgotpassword> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    super.dispose();
   }
 }

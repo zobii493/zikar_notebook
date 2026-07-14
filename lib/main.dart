@@ -14,14 +14,9 @@ import 'package:naqashbandi_shazli/screens/GNav.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Background message handle karne ke liye
-  print('Handling a background message: ${message.messageId}');
-}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await Firebase.initializeApp(
     options: FirebaseOptions(
       apiKey: 'AIzaSyBV677SHIjWAqhphSqqK_-5Jmf9b1qBvv8',
@@ -85,6 +80,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       color: AppColors.ivoryColor,
       home: homeWidget,
+      // home: Welcome(),
     );
   }
 }
