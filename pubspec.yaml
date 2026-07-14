@@ -60,21 +60,9 @@ flutter:
         - asset: assets/fonts/Amiri-Regular.ttf
     - family: SpaceGrotesk
       fonts:
-        - asset: assets/fonts/spacegrotesk/SpaceGrotesk-Regular.ttf
-#        - asset: assets/fonts/spacegrotesk/SpaceGrotesk-Medium.ttf
-#          weight: 500
-#        - asset: assets/fonts/spacegrotesk/SpaceGrotesk-SemiBold.ttf
-#          weight: 600
-#        - asset: assets/fonts/spacegrotesk/SpaceGrotesk-Bold.ttf
-#          weight: 700
+        - asset: assets/fonts/SpaceGrotesk-Regular.ttf
     - family: PlusJakartaSans
       fonts:
-        - asset: assets/fonts/plusjakartasans/PlusJakartaSans-Regular.ttf
-#        - asset: assets/fonts/plusjakartasans/PlusJakartaSans-Medium.ttf
-#          weight: 500
-#        - asset: assets/fonts/plusjakartasans/PlusJakartaSans-SemiBold.ttf
-#          weight: 600
-#        - asset: assets/fonts/plusjakartasans/PlusJakartaSans-Bold.ttf
-#          weight: 700
+        - asset: assets/fonts/PlusJakartaSans-Regular.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700

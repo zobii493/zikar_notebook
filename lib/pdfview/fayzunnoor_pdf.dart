@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-class Fayzunoorpdf extends StatelessWidget {
+class Fayzunoorpdf extends StatefulWidget {
   final String path;
   final String title;
 
   Fayzunoorpdf({required this.path,required this.title});
 
+  @override
+  State<Fayzunoorpdf> createState() => _FayzunoorpdfState();
+}
+
+class _FayzunoorpdfState extends State<Fayzunoorpdf> {
+  late final PdfViewerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PdfViewerController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,16 +33,16 @@ class Fayzunoorpdf extends StatelessWidget {
         backgroundColor: Colors.black,
         centerTitle: true,
         title: Text(
-          title,
+          widget.title,
           style: TextStyle(
               color: Colors.white,
               fontSize: 30,
               fontWeight: FontWeight.bold,
-              fontFamily: 'AutourOne'),
+              fontFamily: 'PlusJakartaSans'),
         ),
       ),
       body: SfPdfViewer.asset(
-        path,
+        widget.path,
         scrollDirection: PdfScrollDirection.vertical,
       ),
     );

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../repositories/auth_repository.dart';
+import '../../repositories/auth_repository.dart';
 
 class EmailVerificationViewModel extends ChangeNotifier {
   EmailVerificationViewModel({AuthRepository? repository})
@@ -13,6 +13,10 @@ class EmailVerificationViewModel extends ChangeNotifier {
   bool isLoading = false;
   bool isCheckingInitialStatus = true;
   bool _disposed = false;
+
+  /// View isay set karta hai — jab email verify ho jaye to yeh call hoga
+  /// taake view khud navigate kar sake (button dabane ka intezar nahi).
+  VoidCallback? onVerified;
 
   /// Was previously synchronous and trusted the *locally cached*
   /// `emailVerified` flag, which stays false until Firebase reloads the
@@ -39,7 +43,9 @@ class EmailVerificationViewModel extends ChangeNotifier {
     if (_disposed) return;
     notifyListeners();
 
-    if (!isEmailVerified) {
+    if (isEmailVerified) {
+      onVerified?.call();
+    } else {
       _scheduleVerificationCheck();
     }
   }
@@ -50,17 +56,25 @@ class EmailVerificationViewModel extends ChangeNotifier {
 
   Future<void> _checkEmailVerified() async {
     if (_disposed) return;
+    final wasVerified = isEmailVerified;
     isEmailVerified = await _repository.reloadAndCheckVerified();
     user = _repository.currentUser;
     if (_disposed) return;
     notifyListeners();
-    if (!isEmailVerified) {
+
+    if (isEmailVerified) {
+      if (!wasVerified) {
+        onVerified?.call();
+      }
+    } else {
       _scheduleVerificationCheck();
     }
   }
 
-  /// Manual fallback for the "I've verified — check again" button, in
-  /// case the automatic 4-second polling hasn't caught up yet.
+  /// Manual fallback for the "I've verified — check again" button, and
+  /// also called when the app resumes from background (e.g. user just
+  /// verified their email in another app), in case the 4-second polling
+  /// timer got suspended while the app was backgrounded.
   Future<void> checkNow() => _checkEmailVerified();
 
   Future<bool> resendEmail() async {

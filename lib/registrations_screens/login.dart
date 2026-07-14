@@ -6,10 +6,11 @@ import 'package:naqashbandi_shazli/registrations_screens/widgets/auth_textfield.
 import 'package:naqashbandi_shazli/registrations_screens/widgets/bismillah_banner.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
-import '../screens/home_screen/homepage.dart';
+import '../screens/GNav.dart';
 import '../utils/responsive.dart';
 import '../utils/snackbar_utils.dart';
-import '../viewmodels/login_viewmodel.dart';
+import '../viewmodel/auth_viewmodels/login_viewmodel.dart';
+import '../viewmodel/bottom_nav_provider.dart';
 import 'forget_password.dart';
 import 'signup.dart';
 
@@ -35,9 +36,10 @@ class _LoginView extends StatelessWidget {
     if (!context.mounted) return;
 
     if (result.success) {
+      context.read<BottomNavProvider>().changeIndex(0);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MyFrontPage()),
+        MaterialPageRoute(builder: (context) => BottomNavBar()),
       );
       context.showTopSnackBar('Successfully signed in!', AppColors.antiqueGoldColor);
     } else if (result.message != null) {

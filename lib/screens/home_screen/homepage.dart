@@ -5,10 +5,9 @@ import 'package:naqashbandi_shazli/widgets/CustomCard.dart';
 import 'package:naqashbandi_shazli/widgets/custom_paint.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
-import '../../pdfview/fayzunnoor_pdf.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import '../../provider/progressbar_provider.dart';
 import '../../repositories/auth_repository.dart';
+import '../../viewmodel/progressbar_provider.dart';
 import 'widgets/bookcard.dart';
 import 'ismezat.dart';
 import 'kalmashareef.dart';
@@ -126,19 +125,6 @@ class _MyFrontPageState extends State<MyFrontPage> {
                               ],
                             ),
                           ),
-
-                          // Container(
-                          //   width: 42,
-                          //   height: 42,
-                          //   decoration: BoxDecoration(
-                          //     shape: BoxShape.circle,
-                          //     color: Colors.white24,
-                          //   ),
-                          //   child: const Icon(
-                          //     Icons.notifications,
-                          //     color: Colors.amber,
-                          //   ),
-                          // ),
                         ],
                       ),
                     ],

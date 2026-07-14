@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../repositories/auth_repository.dart';
+import '../../repositories/auth_repository.dart';
 import 'auth_action_result.dart';
 
 class LoginViewModel extends ChangeNotifier {

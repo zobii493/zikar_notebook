@@ -7,7 +7,7 @@ import 'package:naqashbandi_shazli/registrations_screens/widgets/loading_overlay
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../utils/responsive.dart';
-import '../viewmodels/welcome_viewmodel.dart';
+import '../viewmodel/auth_viewmodels/welcome_viewmodel.dart';
 import 'signup.dart';
 import 'login.dart';
 

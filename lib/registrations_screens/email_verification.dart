@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../utils/responsive.dart';
 import '../utils/snackbar_utils.dart';
-import '../viewmodels/email_verification_viewmodel.dart';
+import '../viewmodel/auth_viewmodels/email_verification_viewmodel.dart';
 import 'login.dart';
 
 class EmailVerificationPage extends StatelessWidget {
@@ -20,8 +20,58 @@ class EmailVerificationPage extends StatelessWidget {
   }
 }
 
-class _EmailVerificationView extends StatelessWidget {
+class _EmailVerificationView extends StatefulWidget {
   const _EmailVerificationView();
+
+  @override
+  State<_EmailVerificationView> createState() =>
+      _EmailVerificationViewState();
+}
+
+class _EmailVerificationViewState extends State<_EmailVerificationView>
+    with WidgetsBindingObserver {
+  bool _navigated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    // Verify hote hi khud navigate ho jaye — "Continue" button ka
+    // intezar na kare.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<EmailVerificationViewModel>().onVerified = () {
+        _goToLogin();
+      };
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // User email verify karne ke liye app se bahar gaya tha, wapis aaya —
+    // turant recheck karo, 4-second polling timer ka intezar mat karo.
+    // (Background me Dart timers suspend ho jate hain, isi liye page
+    // atka reh jata tha.)
+    if (state == AppLifecycleState.resumed) {
+      context.read<EmailVerificationViewModel>().checkNow();
+    }
+  }
+
+  void _goToLogin() {
+    if (_navigated || !mounted) return;
+    _navigated = true;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const Login()),
+    );
+  }
 
   Future<void> _resendEmail(BuildContext context) async {
     final viewModel = context.read<EmailVerificationViewModel>();
@@ -63,6 +113,12 @@ class _EmailVerificationView extends StatelessWidget {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
+    }
+
+    // Agar already verified nikla (auto-navigate callback fire hone se
+    // pehle ka ek frame), to loader dikhao, purana content flash na ho.
+    if (viewModel.isEmailVerified && !_navigated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _goToLogin());
     }
 
     return Scaffold(
@@ -152,14 +208,7 @@ class _EmailVerificationView extends StatelessWidget {
                                 color: AppColors.emeraldDeepColor,
                                 textColor: Colors.white,
                                 isLoading: false,
-                                onPressed: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const Login(),
-                                    ),
-                                  );
-                                },
+                                onPressed: _goToLogin,
                               )
                             else ...[
                               _VerificationButton(

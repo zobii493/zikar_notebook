@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:naqashbandi_shazli/screens/counter_screen/counter.dart';
 import 'package:naqashbandi_shazli/screens/profile_screen/profile_info.dart';
 import '../core/app_colors.dart';
-import '../provider/bottom_nav_provider.dart';
+import '../viewmodel/bottom_nav_provider.dart';
 import 'home_screen/homepage.dart';
 
 class BottomNavBar extends StatelessWidget {

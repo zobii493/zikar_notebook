@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../utils/responsive.dart';
 import '../utils/snackbar_utils.dart';
-import '../viewmodels/forgot_password_viewmodel.dart';
+import '../viewmodel/auth_viewmodels/forgot_password_viewmodel.dart';
 
 class Forgotpassword extends StatelessWidget {
   const Forgotpassword({super.key});

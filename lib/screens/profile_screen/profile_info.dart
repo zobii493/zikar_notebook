@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:naqashbandi_shazli/screens/profile_screen/faqs.dart';
 import '../../core/app_colors.dart';
 import '../../model/profile_model.dart';
-import '../../provider/profile_vm.dart';
 import '../../registrations_screens/login.dart';
+import '../../viewmodel/profile_vm.dart';
 import '../../widgets/custom_paint.dart';
 import 'helps_supports.dart';
 

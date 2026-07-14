@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../repositories/auth_repository.dart';
+import '../../repositories/auth_repository.dart';
 import 'auth_action_result.dart';
 
 class ForgotPasswordViewModel extends ChangeNotifier {

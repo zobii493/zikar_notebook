@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../../provider/ismezat_kalmasharif_provider.dart';
+import '../../viewmodel/ismezat_kalmasharif_provider.dart';
 import '../history/ismezat_history.dart';
 
 class IsmezatAndkalmaSarif extends StatefulWidget {

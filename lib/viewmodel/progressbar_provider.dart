@@ -6,6 +6,10 @@ class ProgressProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // FezuNoorProvider.checkboxLabels.length ke barabar rakhein — ye
+  // dono jagah sync rehna zaroori hai.
+  static const int _fezuNoorTotalTasks = 42;
+
   double fezuNoorProgress = 0;
   double ismeZatProgress = 0;
   double kalmaSharifProgress = 0;
@@ -29,20 +33,12 @@ class ProgressProvider with ChangeNotifier {
         if (doc.exists) {
           final data = doc.data() as Map<String, dynamic>;
 
-          int total = data.keys
-              .where((k) =>
-          k.startsWith("checkbox_") &&
-              !k.contains("_date") &&
-              !k.contains("_time") &&
-              !k.contains("_day"))
-              .length;
-
           int completed = 0;
-          for (int i = 0; i < total; i++) {
+          for (int i = 0; i < _fezuNoorTotalTasks; i++) {
             if (data["checkbox_$i"] == true) completed++;
           }
 
-          fezuNoorProgress = total > 0 ? completed / total : 0;
+          fezuNoorProgress = completed / _fezuNoorTotalTasks;
           notifyListeners();
         } else {
           fezuNoorProgress = 0;
@@ -51,7 +47,6 @@ class ProgressProvider with ChangeNotifier {
       });
     }
   }
-
 
   void _listenIsmeZat() {
     User? user = _auth.currentUser;

@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:naqashbandi_shazli/provider/counter_provider.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
+import '../../viewmodel/counter_provider.dart';
 import '../../widgets/top_snack_bar.dart';
 import '../../widgets/custom_paint.dart';
 import 'package:vibration/vibration.dart';

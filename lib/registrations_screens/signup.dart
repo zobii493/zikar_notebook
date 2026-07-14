@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../utils/responsive.dart';
 import '../utils/snackbar_utils.dart';
-import '../viewmodels/signup_viewmodel.dart';
+import '../viewmodel/auth_viewmodels/signup_viewmodel.dart';
 import 'email_verification.dart';
 
 class Signup extends StatelessWidget {
