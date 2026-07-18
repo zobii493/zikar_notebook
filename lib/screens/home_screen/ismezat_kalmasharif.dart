@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../../core/app_colors.dart';
+import '../../core/app_theme_colors.dart';
 import '../../viewmodel/ismezat_kalmasharif_provider.dart';
 import '../history/ismezat_history.dart';
 
@@ -132,31 +134,53 @@ class _IsmezatAndkalmaSharifState extends State<IsmezatAndkalmaSarif> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final colors = context.appColors;
         return AlertDialog(
-          title: const Text('Confirm Reset'),
-          content: const Text('Do you want to reset weekly Zikar?'),
+          backgroundColor: colors.cardBackground,
+          title: Text(
+            'Confirm Reset',
+            style: TextStyle(
+              fontFamily: 'PlusJakartaSans',
+              fontWeight: FontWeight.bold,
+              color: colors.textPrimary,
+            ),
+          ),
+          content: Text(
+            'Do you want to reset weekly Zikar?',
+            style: TextStyle(fontFamily: 'PlusJakartaSans',
+                height: 1.4,
+                color: colors.textSecondary),
+          ),
           actions: [
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: Colors.red,
+                color: AppColors.maroonColor,
               ),
               child: TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cancel',
-                    style: TextStyle(color: Colors.white, fontSize: 16)),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: AppColors.whiteColor,
+                    fontSize: 16,
+                    fontFamily: 'PlusJakartaSans',
+                  ),
+                ),
               ),
             ),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: Colors.green,
+                color: colors.emeraldDeep,
               ),
               child: TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   provider.resetWeek(
-                      widget.collectionName, widget.historyCollection);
+                    widget.collectionName,
+                    widget.historyCollection,
+                  );
 
                   // Clear controllers
                   mondayController.clear();
@@ -167,8 +191,14 @@ class _IsmezatAndkalmaSharifState extends State<IsmezatAndkalmaSarif> {
                   saturdayController.clear();
                   sundayController.clear();
                 },
-                child: const Text('Reset',
-                    style: TextStyle(color: Colors.white, fontSize: 16)),
+                child: const Text(
+                  'Reset',
+                  style: TextStyle(
+                    color: AppColors.whiteColor,
+                    fontSize: 16,
+                    fontFamily: 'PlusJakartaSans',
+                  ),
+                ),
               ),
             ),
           ],
@@ -181,23 +211,25 @@ class _IsmezatAndkalmaSharifState extends State<IsmezatAndkalmaSarif> {
   Widget build(BuildContext context) {
     final provider = Provider.of<IsmezatProvider>(context);
     int remainingZikar = provider.totalZikarGoal - provider.completedZikar;
+    final colors = context.appColors;
 
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.emeraldDeepColor,
         title: Center(
           child: Text(
             widget.title,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: colors.gold,
               fontWeight: FontWeight.bold,
               fontSize: 24,
-              fontFamily: 'AutourOne',
+              fontFamily: 'Amiri',
             ),
           ),
         ),
         leading: IconButton(
-          icon: const FaIcon(FontAwesomeIcons.angleLeft, color: Colors.white),
+          icon: FaIcon(FontAwesomeIcons.angleLeft, color: colors.gold),
           onPressed: () {
             Navigator.pop(context, provider.completedPercentage);
             provider.loadData(widget.collectionName, widget.historyCollection);
@@ -216,150 +248,195 @@ class _IsmezatAndkalmaSharifState extends State<IsmezatAndkalmaSarif> {
                   ),
                 );
               },
-              icon: const FaIcon(
+              icon: FaIcon(
                 FontAwesomeIcons.clockRotateLeft,
-                color: Colors.white,
+                color: colors.gold,
                 size: 18,
               ),
             ),
           ),
         ],
       ),
-      body: ListView(children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(widget.subtitle,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Container(
-                    height: 20,
-                    width: 20,
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.blue),
-                  ),
-                  const SizedBox(width: 7),
-                  const Text('Total Zikar'),
-                  const SizedBox(width: 20),
-                  Container(
-                    height: 20,
-                    width: 20,
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.teal),
-                  ),
-                  const SizedBox(width: 7),
-                  const Text('Remaining Zikar'),
-                ],
-              ),
-              const SizedBox(height: 30),
-              _buildProgressBar(provider.completedZikar, Colors.blue,
-                  provider.totalZikarGoal),
-              Text('${provider.completedZikar}'),
-              const SizedBox(height: 20),
-              _buildProgressBar(
-                  remainingZikar, Colors.teal, provider.totalZikarGoal),
-              Text('$remainingZikar'),
-              const SizedBox(height: 20),
-              Column(
-                children: [
-                  buildDayZikarInput(
-                      'Day 1', mondayController, provider.mondayZikar,
-                      provider.isMondayAdded),
-                  buildDayZikarInput(
-                      'Day 2', tuesdayController, provider.tuesdayZikar,
-                      provider.isTuesdayAdded),
-                  buildDayZikarInput(
-                      'Day 3', wednesdayController, provider.wednesdayZikar,
-                      provider.isWednesdayAdded),
-                  buildDayZikarInput(
-                      'Day 4', thursdayController, provider.thursdayZikar,
-                      provider.isThursdayAdded),
-                  buildDayZikarInput(
-                      'Day 5', fridayController, provider.fridayZikar,
-                      provider.isFridayAdded),
-                  buildDayZikarInput(
-                      'Day 6', saturdayController, provider.saturdayZikar,
-                      provider.isSaturdayAdded),
-                  buildDayZikarInput(
-                      'Day 7', sundayController, provider.sundayZikar,
-                      provider.isSundayAdded),
-                  buildTotalRow(
-                      'Total Weekly Zikar    :  ', provider.weeklyTotal),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: resetWeek,
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20))),
-                    child: const Text('Reset Week',
-                        style: TextStyle(fontSize: 20, color: Colors.white)),
-                  ),
-                  const Spacer(),
-                  ElevatedButton(
-                    onPressed: updateDailyZikar,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)),
-                    ),
-                    child: const Text('Add Zikar',
-                        style: TextStyle(fontSize: 20, color: Colors.white)),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ]),
-    );
-  }
-
-  Widget _buildProgressBar(int value, Color color, int total) {
-    return LinearProgressIndicator(
-      borderRadius: BorderRadius.circular(10),
-      minHeight: 20,
-      value: value / total,
-      backgroundColor: color.withOpacity(0.2),
-      valueColor: AlwaysStoppedAnimation<Color>(color),
-    );
-  }
-
-  Widget buildDayZikarInput(
-      String label, TextEditingController controller, int zikarValue,
-      bool isAdded) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
+      body: ListView(
         children: [
-          Expanded(
-            child: TextField(
-              cursorColor: Colors.black,
-              keyboardType: TextInputType.number,
-              controller: controller,
-              enabled: !isAdded,
-              decoration: InputDecoration(
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      widget.subtitle,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: colors.headingPrimary,
+                        fontFamily: 'PlusJakartaSans',
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: colors.emerald.withValues(alpha: 0.15),
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: Text(
+                        'Zikar Tracker',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'PlusJakartaSans',
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                hintText: isAdded
-                    ? '$label Zikar: $zikarValue'
-                    : '$label',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide:
-                  const BorderSide(color: Colors.black, width: 1),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildStatCard(
+                        label: 'TOTAL',
+                        value: provider.completedZikar,
+                        total: provider.totalZikarGoal,
+                        dotColor: colors.emeraldDeep,
+                        barColor: colors.emerald,
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: _buildStatCard(
+                        label: 'REMAINING',
+                        value: remainingZikar,
+                        total: provider.totalZikarGoal,
+                        dotColor: colors.gold,
+                        barColor: colors.gold,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+                const SizedBox(height: 20),
+                Column(
+                  children: [
+                    _buildDayZikarInput(
+                      'Day 1',
+                      mondayController,
+                      provider.mondayZikar,
+                      provider.isMondayAdded,
+                    ),
+                    _buildDayZikarInput(
+                      'Day 2',
+                      tuesdayController,
+                      provider.tuesdayZikar,
+                      provider.isTuesdayAdded,
+                    ),
+                    _buildDayZikarInput(
+                      'Day 3',
+                      wednesdayController,
+                      provider.wednesdayZikar,
+                      provider.isWednesdayAdded,
+                    ),
+                    _buildDayZikarInput(
+                      'Day 4',
+                      thursdayController,
+                      provider.thursdayZikar,
+                      provider.isThursdayAdded,
+                    ),
+                    _buildDayZikarInput(
+                      'Day 5',
+                      fridayController,
+                      provider.fridayZikar,
+                      provider.isFridayAdded,
+                    ),
+                    _buildDayZikarInput(
+                      'Day 6',
+                      saturdayController,
+                      provider.saturdayZikar,
+                      provider.isSaturdayAdded,
+                    ),
+                    _buildDayZikarInput(
+                      'Day 7',
+                      sundayController,
+                      provider.sundayZikar,
+                      provider.isSundayAdded,
+                    ),
+                    _buildTotalRow(
+                      'Total Weekly Zikar    :  ',
+                      provider.weeklyTotal,
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 55,
+                        child: ElevatedButton.icon(
+                          onPressed: resetWeek,
+                          icon: Icon(
+                            Icons.refresh_rounded,
+                            color: colors.gold,
+                            size: 22,
+                          ),
+                          label: const Text(
+                            "Reset Week",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.whiteColor,
+                              fontFamily: "PlusJakartaSans",
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.maroonColor,
+                            elevation: 6,
+                            shadowColor: AppColors.maroonColor.withValues(alpha: .35),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 16),
+
+                    Expanded(
+                      child: SizedBox(
+                        height: 55,
+                        child: ElevatedButton.icon(
+                          onPressed: updateDailyZikar,
+                          icon: Icon(
+                            Icons.add_circle_outline_rounded,
+                            color: colors.gold,
+                            size: 22,
+                          ),
+                          label: const Text(
+                            "Add Zikar",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.whiteColor,
+                              fontFamily: "PlusJakartaSans",
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.emeraldDeepColor,
+                            elevation: 6,
+                            shadowColor: colors.emeraldDeep.withValues(alpha: .35),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
         ],
@@ -367,31 +444,224 @@ class _IsmezatAndkalmaSharifState extends State<IsmezatAndkalmaSarif> {
     );
   }
 
-  Widget buildTotalRow(String label, int total) {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 10.0, top: 8),
-          child: Text(
-            label,
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Colors.blue),
+  Widget _buildDayZikarInput(String label,
+      TextEditingController controller,
+      int zikarValue,
+      bool isAdded,) {
+    final colors = context.appColors;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+        decoration: BoxDecoration(
+          color: isAdded
+              ? colors.emerald.withValues(alpha: 0.08)
+              : colors.cardBackground,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isAdded
+                ? colors.emerald.withValues(alpha: 0.4)
+                : colors.border,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(right: 20, top: 8),
-          child: Text(
-            total.toString(),
-            style: const TextStyle(
-              fontSize: 25,
+        child: Row(
+          children: [
+            Container(
+              height: 34,
+              width: 34,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isAdded
+                    ? colors.emerald
+                    : colors.emeraldDeep.withValues(alpha: 0.1),
+              ),
+              child: isAdded
+                  ? const Icon(
+                  Icons.check, color: AppColors.whiteColor, size: 18)
+                  : Text(
+                label
+                    .split(' ')
+                    .last,
+                style: TextStyle(
+                  color: colors.emeraldDeep,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: isAdded
+                  ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                child: Row(
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontFamily: 'PlusJakartaSans',
+                        fontWeight: FontWeight.w600,
+                        color: colors.textPrimary,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      NumberFormat('#,###').format(zikarValue),
+                      style: TextStyle(
+                        fontFamily: 'SpaceGrotesk',
+                        fontWeight: FontWeight.bold,
+                        color: colors.headingPrimary,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+                  : TextField(
+                cursorColor: colors.emeraldDeep,
+                keyboardType: TextInputType.number,
+                controller: controller,
+                style: const TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  fontWeight: FontWeight.w600,
+                ),
+                decoration: InputDecoration(
+                  isDense: true,
+                  border: InputBorder.none,
+                  labelText: label,
+                  labelStyle: TextStyle(
+                    color: colors.textSecondary,
+                    fontSize: 13,
+                  ),
+                  hintText: 'Enter zikar count',
+                  hintStyle: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTotalRow(String label, int total) {
+    final colors = context.appColors;
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 8),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        decoration: BoxDecoration(
+          color: AppColors.emeraldDeepColor,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.summarize_rounded,
+                color: AppColors.whiteColor.withValues(alpha: 0.70), size: 22),
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Text(
+                'Total Weekly Zikar',
+                style: TextStyle(
+                  color: AppColors.whiteColor,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  fontFamily: 'PlusJakartaSans',
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: Text(
+                  NumberFormat('#,###').format(total),
+                  style: TextStyle(
+                    color: colors.gold,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    fontFamily: 'SpaceGrotesk',
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard({
+    required String label,
+    required int value,
+    required int total,
+    required Color dotColor,
+    required Color barColor,
+  }) {
+    final formattedValue = NumberFormat('#,###').format(value);
+    final colors = context.appColors;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.cardBackground,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: colors.border, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                height: 8,
+                width: 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: dotColor,
+                ),
+              ),
+              const SizedBox(width: 7),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.w600,
+                  color: colors.textSecondary,
+                  fontFamily: 'PlusJakartaSans',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            formattedValue,
+            style: TextStyle(
+              fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color: colors.textPrimary,
+              fontFamily: 'SpaceGrotesk',
             ),
           ),
-        ),
-      ],
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              minHeight: 6,
+              value: total > 0 ? value / total : 0,
+              backgroundColor: barColor.withValues(alpha: 0.15),
+              valueColor: AlwaysStoppedAnimation<Color>(barColor),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

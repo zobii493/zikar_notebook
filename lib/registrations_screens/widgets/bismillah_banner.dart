@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/app_colors.dart';
+import '../../core/app_theme_colors.dart';
 import '../../utils/responsive.dart';
 import 'gradient_crosshatch_background.dart';
 
@@ -9,6 +10,7 @@ class BismillahBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Container(
       width: double.infinity,
       height: 110,
@@ -16,7 +18,7 @@ class BismillahBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.emeraldDeepColor.withOpacity(0.3),
+            color: AppColors.emeraldDeepColor.withValues(alpha: 0.3),
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
@@ -32,7 +34,7 @@ class BismillahBanner extends StatelessWidget {
               Container(
                 width: 22,
                 height: 1,
-                color: AppColors.antiqueGoldColor.withOpacity(0.6),
+                color: colors.gold.withValues(alpha: 0.6),
               ),
               const SizedBox(width: 10),
               Text(
@@ -41,7 +43,7 @@ class BismillahBanner extends StatelessWidget {
                 style: TextStyle(
                   fontSize: context.responsiveFont(24),
                   fontWeight: FontWeight.w600,
-                  color: AppColors.antiqueGoldColor,
+                  color: colors.gold,
                   fontFamily: 'Amiri',
                 ),
               ),
@@ -49,7 +51,7 @@ class BismillahBanner extends StatelessWidget {
               Container(
                 width: 22,
                 height: 1,
-                color: AppColors.antiqueGoldColor.withOpacity(0.6),
+                color: colors.gold.withValues(alpha: 0.6),
               ),
             ],
           ),

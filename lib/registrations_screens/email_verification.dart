@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:naqashbandi_shazli/core/app_colors.dart';
 import 'package:naqashbandi_shazli/registrations_screens/widgets/gradient_crosshatch_background.dart';
 import 'package:provider/provider.dart';
-import '../core/app_colors.dart';
+import '../core/app_theme_colors.dart';
 import '../utils/responsive.dart';
 import '../utils/snackbar_utils.dart';
 import '../viewmodel/auth_viewmodels/email_verification_viewmodel.dart';
@@ -37,8 +38,6 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    // Verify hote hi khud navigate ho jaye — "Continue" button ka
-    // intezar na kare.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<EmailVerificationViewModel>().onVerified = () {
@@ -55,10 +54,6 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // User email verify karne ke liye app se bahar gaya tha, wapis aaya —
-    // turant recheck karo, 4-second polling timer ka intezar mat karo.
-    // (Background me Dart timers suspend ho jate hain, isi liye page
-    // atka reh jata tha.)
     if (state == AppLifecycleState.resumed) {
       context.read<EmailVerificationViewModel>().checkNow();
     }
@@ -81,7 +76,7 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
 
     context.showTopSnackBar(
       success ? 'Verification email sent successfully.' : 'Unable to send email.',
-      success ? Colors.green : Colors.red,
+      success ? AppColors.emeraldColor : AppColors.maroonColor,
     );
   }
 
@@ -89,10 +84,8 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
   Widget build(BuildContext context) {
     final viewModel = context.watch<EmailVerificationViewModel>();
     final headerHeight = context.responsiveHeight(0.32).clamp(220.0, 320.0);
+    final colors = context.appColors;
 
-    // Session was lost (app reopened after being signed out, token expired,
-    // etc.) — nothing to verify, so send the user back to Login instead of
-    // showing a stuck/blank screen.
     if (viewModel.user == null && !viewModel.isCheckingInitialStatus) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!context.mounted) return;
@@ -101,28 +94,25 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
           MaterialPageRoute(builder: (_) => const Login()),
         );
       });
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        backgroundColor: colors.background,
+        body: Center(child: CircularProgressIndicator(color: colors.emeraldDeep)),
       );
     }
 
-    // Checking the real (reloaded) verification status on open — avoids
-    // flashing "not verified" / the resend button for an instant before
-    // we know the true state.
     if (viewModel.isCheckingInitialStatus) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        backgroundColor: colors.background,
+        body: Center(child: CircularProgressIndicator(color: colors.emeraldDeep)),
       );
     }
 
-    // Agar already verified nikla (auto-navigate callback fire hone se
-    // pehle ka ek frame), to loader dikhao, purana content flash na ho.
     if (viewModel.isEmailVerified && !_navigated) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _goToLogin());
     }
 
     return Scaffold(
-      backgroundColor: AppColors.ivoryColor,
+      backgroundColor: colors.background,
       body: Stack(
         children: [
           SizedBox(
@@ -144,20 +134,20 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
                         height: 110,
                         width: 110,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: colors.cardBackground,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(.15),
+                              color: Colors.black.withValues(alpha: .15),
                               blurRadius: 20,
                               offset: const Offset(0, 8),
                             ),
                           ],
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.mark_email_read_rounded,
                           size: 55,
-                          color: AppColors.emeraldDeepColor,
+                          color: colors.headingPrimary,
                         ),
                       ),
 
@@ -166,11 +156,11 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
                       Container(
                         padding: const EdgeInsets.all(28),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: colors.cardBackground,
                           borderRadius: BorderRadius.circular(28),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(.15),
+                              color: Colors.black.withValues(alpha: .1),
                               blurRadius: 25,
                               offset: const Offset(0, 10),
                             ),
@@ -184,7 +174,7 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
                                 fontSize: context.responsiveFont(28),
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'PlusJakartaSans',
-                                color: AppColors.emeraldDeepColor,
+                                color: colors.headingPrimary,
                               ),
                             ),
                             const SizedBox(height: 18),
@@ -196,7 +186,7 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
                               style: TextStyle(
                                 fontSize: context.responsiveFont(16),
                                 height: 1.6,
-                                color: Colors.black87,
+                                color: colors.textPrimary,
                                 fontFamily: 'PlusJakartaSans',
                               ),
                             ),
@@ -205,7 +195,7 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
                             if (viewModel.isEmailVerified)
                               _VerificationButton(
                                 title: 'Continue',
-                                color: AppColors.emeraldDeepColor,
+                                color: colors.emeraldDeep,
                                 textColor: Colors.white,
                                 isLoading: false,
                                 onPressed: _goToLogin,
@@ -213,7 +203,7 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
                             else ...[
                               _VerificationButton(
                                 title: 'Resend Verification Email',
-                                color: AppColors.antiqueGoldColor,
+                                color: colors.gold,
                                 textColor: Colors.white,
                                 isLoading: viewModel.isLoading,
                                 onPressed: () => _resendEmail(context),
@@ -223,34 +213,34 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
                                 onPressed: () => context
                                     .read<EmailVerificationViewModel>()
                                     .checkNow(),
-                                child: const Text(
+                                child: Text(
                                   "I've verified — check again",
                                   style: TextStyle(
                                     fontFamily: 'PlusJakartaSans',
                                     fontWeight: FontWeight.w600,
-                                    color: AppColors.emeraldDeepColor,
+                                    color: colors.emeraldDeep,
                                   ),
                                 ),
                               ),
                             ],
 
                             const SizedBox(height: 25),
-                            const Divider(),
+                            Divider(color: colors.border),
                             const SizedBox(height: 15),
 
-                            const Row(
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.security,
-                                  color: AppColors.emeraldColor,
+                                  color: colors.emerald,
                                   size: 18,
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Text(
                                   'Your account is protected',
                                   style: TextStyle(
-                                    color: Colors.grey,
+                                    color: colors.textSecondary,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -262,13 +252,13 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
 
                       const SizedBox(height: 35),
 
-                      const Text(
+                      Text(
                         "Please check your Spam or Junk folder if you don't receive the email within a few minutes.",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14,
                           height: 1.6,
-                          color: Colors.black54,
+                          color: colors.textSecondary,
                         ),
                       ),
 
@@ -285,8 +275,6 @@ class _EmailVerificationViewState extends State<_EmailVerificationView>
   }
 }
 
-/// Kept local to this screen — its ElevatedButton + LoadingIndicator style
-/// is distinct from the shared AuthGradientButton used on Login/Signup.
 class _VerificationButton extends StatelessWidget {
   const _VerificationButton({
     required this.title,
@@ -304,6 +292,7 @@ class _VerificationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return SizedBox(
       width: double.infinity,
       height: 58,
@@ -318,12 +307,12 @@ class _VerificationButton extends StatelessWidget {
         ),
         onPressed: isLoading ? null : onPressed,
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
           width: 35,
           height: 35,
           child: LoadingIndicator(
             indicatorType: Indicator.ballSpinFadeLoader,
-            colors: [AppColors.ivoryColor, AppColors.antiqueGoldColor],
+            colors: [colors.background, colors.gold],
           ),
         )
             : Text(

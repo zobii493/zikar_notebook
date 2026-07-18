@@ -21,8 +21,8 @@
 
     <application
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
-        android:label="NaqashBandi Shazli App"
+        android:icon="@mipmap/launcher_icon"
+        android:label="Zikar Notebook"
         android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"

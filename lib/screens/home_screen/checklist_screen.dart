@@ -3,38 +3,61 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../core/app_colors.dart';
-import '../../viewmodel/fezunoor_provider.dart';
+import '../../core/app_theme_colors.dart';
+import '../../viewmodel/checklist_provider.dart';
 
-class FezuNoor extends StatelessWidget {
-  const FezuNoor({super.key});
+class ChecklistScreen extends StatelessWidget {
+  const ChecklistScreen({
+    super.key,
+    required this.appBarTitle,
+    required this.itemsLabel,
+    required this.createProvider,
+  });
+
+  final String appBarTitle;
+  final String itemsLabel;
+  final ChecklistProvider Function() createProvider;
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<FezuNoorProvider>(context);
-    final double progress = provider.calculateProgress(); // 0-100
+    return ChangeNotifierProvider<ChecklistProvider>(
+      create: (_) => createProvider(),
+      child: _ChecklistView(appBarTitle: appBarTitle, itemsLabel: itemsLabel),
+    );
+  }
+}
+
+class _ChecklistView extends StatelessWidget {
+  const _ChecklistView({required this.appBarTitle, required this.itemsLabel});
+
+  final String appBarTitle;
+  final String itemsLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<ChecklistProvider>(context);
+    final double progress = provider.calculateProgress();
     final int completed = provider.isCheckedList.where((c) => c).length;
-    final int total = provider.checkboxLabels.length;
+    final int total = provider.labels.length;
+    final colors = context.appColors;
 
     return Scaffold(
-      backgroundColor: AppColors.ivoryColor,
+      backgroundColor: colors.background,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppColors.emeraldDeepColor,
         centerTitle: true,
-        title: const Text(
-          'فیوض النور',
+        title: Text(
+          appBarTitle,
           style: TextStyle(
-            color: AppColors.antiqueGoldColor,
+            color: colors.gold,
             fontWeight: FontWeight.bold,
             fontSize: 24,
             fontFamily: 'Amiri',
           ),
         ),
         leading: IconButton(
-          icon: const FaIcon(
-            FontAwesomeIcons.angleLeft,
-            color: AppColors.antiqueGoldColor,
-          ),
+          icon: FaIcon(FontAwesomeIcons.angleLeft, color: colors.gold),
           onPressed: () {
             provider.saveProgressBar(progress);
             Navigator.of(context).pop(progress);
@@ -42,11 +65,7 @@ class FezuNoor extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const FaIcon(
-              FontAwesomeIcons.ellipsisVertical,
-              color: AppColors.antiqueGoldColor,
-              size: 20,
-            ),
+            icon: FaIcon(FontAwesomeIcons.ellipsisVertical, color: colors.gold, size: 20),
             onPressed: () => _showOptionsMenu(context, provider),
           ),
         ],
@@ -68,9 +87,9 @@ class FezuNoor extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'YOUR WAZAIF',
+                  'YOUR ${itemsLabel.toUpperCase()}',
                   style: TextStyle(
-                    color: AppColors.emeraldDeepColor.withValues(alpha: .55),
+                    color: colors.textPrimary.withValues(alpha: .55),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.4,
@@ -81,7 +100,7 @@ class FezuNoor extends StatelessWidget {
                 Text(
                   '$completed / $total',
                   style: TextStyle(
-                    color: AppColors.emeraldDeepColor.withValues(alpha: .55),
+                    color: colors.textPrimary.withValues(alpha: .55),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     fontFamily: 'PlusJakartaSans',
@@ -91,11 +110,11 @@ class FezuNoor extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          ...List.generate(provider.checkboxLabels.length, (index) {
+          ...List.generate(provider.labels.length, (index) {
             final bool isChecked = provider.isCheckedList[index];
-            return _WazifaTile(
+            return _ChecklistTile(
               index: index,
-              label: provider.checkboxLabels[index],
+              label: provider.labels[index],
               isChecked: isChecked,
               onTap: isChecked
                   ? null
@@ -107,32 +126,23 @@ class FezuNoor extends StatelessWidget {
     );
   }
 
-  void _showOptionsMenu(BuildContext context, FezuNoorProvider provider) {
+  void _showOptionsMenu(BuildContext context, ChecklistProvider provider) {
+    final colors = context.appColors;
     showMenu<String>(
       context: context,
       position: const RelativeRect.fromLTRB(1000, 80, 16, 0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      color: Colors.white,
+      color: colors.cardBackground,
       elevation: 6,
       items: [
-        _menuItem(
-          'undo',
-          FontAwesomeIcons.rotateLeft,
-          'Undo last task',
-          AppColors.emeraldDeepColor,
+        _menuItem('undo', FontAwesomeIcons.rotateLeft, 'Undo last task', colors.textPrimary),
+        _menuItem('history', FontAwesomeIcons.clockRotateLeft, 'History', colors.textPrimary),
+        PopupMenuItem<String>(
+          enabled: false,
+          height: 1,
+          child: Divider(color: colors.gold.withValues(alpha: 0.5), thickness: 1),
         ),
-        _menuItem(
-          'history',
-          FontAwesomeIcons.clockRotateLeft,
-          'History',
-          AppColors.emeraldDeepColor,
-        ),
-        _menuItem(
-          'delete',
-          FontAwesomeIcons.trash,
-          'Delete all completed',
-          AppColors.maroonColor,
-        ),
+        _menuItem('delete', FontAwesomeIcons.trash, 'Delete all completed', colors.maroon),
       ],
     ).then((value) async {
       if (!context.mounted || value == null) return;
@@ -150,11 +160,11 @@ class FezuNoor extends StatelessWidget {
   }
 
   PopupMenuItem<String> _menuItem(
-    String value,
-    FaIconData icon,
-    String label,
-    Color color,
-  ) {
+      String value,
+      FaIconData icon,
+      String label,
+      Color color,
+      ) {
     return PopupMenuItem<String>(
       value: value,
       child: Row(
@@ -175,37 +185,42 @@ class FezuNoor extends StatelessWidget {
     );
   }
 
-  void _showDeleteConfirmation(
-    BuildContext context,
-    FezuNoorProvider provider,
-  ) {
+  void _showDeleteConfirmation(BuildContext context, ChecklistProvider provider) {
+    final colors = context.appColors;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        backgroundColor: colors.cardBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
+        title: Text(
           'Delete completed tasks?',
           style: TextStyle(
             fontFamily: 'PlusJakartaSans',
             fontWeight: FontWeight.bold,
-            color: AppColors.emeraldDeepColor,
+            color: colors.textPrimary,
           ),
         ),
-        content: const Text(
-          'This will clear every wazifa you have marked as completed. This cannot be undone.',
-          style: TextStyle(fontFamily: 'PlusJakartaSans', height: 1.4),
+        content: Text(
+          'This will clear every item you have marked as completed. This cannot be undone.',
+          style: TextStyle(
+            fontFamily: 'PlusJakartaSans',
+            height: 1.4,
+            color: colors.textPrimary,
+          ),
         ),
         actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         actions: [
-          TextButton(
+          OutlinedButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.emeraldDeepColor,
+            style: OutlinedButton.styleFrom(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colors.emeraldDeep),
+              foregroundColor: colors.emeraldDeep,
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
             ),
             child: const Text(
               'Cancel',
-              style: TextStyle(fontWeight: FontWeight.w700),
+              style: TextStyle(fontWeight: FontWeight.w700, fontFamily: 'PlusJakartaSans'),
             ),
           ),
           ElevatedButton(
@@ -214,17 +229,15 @@ class FezuNoor extends StatelessWidget {
               Navigator.of(ctx).pop();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.maroonColor,
+              backgroundColor: colors.maroon,
               foregroundColor: Colors.white,
               elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
             ),
             child: const Text(
               'Delete',
-              style: TextStyle(fontWeight: FontWeight.w700),
+              style: TextStyle(fontWeight: FontWeight.w700, fontFamily: 'PlusJakartaSans'),
             ),
           ),
         ],
@@ -232,71 +245,67 @@ class FezuNoor extends StatelessWidget {
     );
   }
 
-  void _showHistoryDialog(
-    BuildContext context,
-    List<Map<String, dynamic>> history,
-  ) {
+  void _showHistoryDialog(BuildContext context, List<Map<String, dynamic>> history) {
+    final colors = context.appColors;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
+        backgroundColor: colors.cardBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         titlePadding: const EdgeInsets.fromLTRB(24, 22, 24, 6),
         contentPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-        title: const Text(
+        title: Text(
           'Completion history',
           style: TextStyle(
             fontFamily: 'PlusJakartaSans',
             fontWeight: FontWeight.bold,
-            color: AppColors.emeraldDeepColor,
+            color: colors.textPrimary,
           ),
         ),
         content: SizedBox(
           width: double.maxFinite,
           child: history.isEmpty
-              ? const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-                  child: Text(
-                    'Nothing completed yet.',
-                    style: TextStyle(
-                      fontFamily: 'PlusJakartaSans',
-                      color: Colors.black54,
-                    ),
-                  ),
-                )
+              ? Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+            child: Text(
+              'Nothing completed yet.',
+              style: TextStyle(
+                fontFamily: 'PlusJakartaSans',
+                color: colors.textSecondary,
+              ),
+            ),
+          )
               : ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: history.length,
-                  separatorBuilder: (_, __) =>
-                      Divider(height: 1, color: Colors.grey.shade200),
-                  itemBuilder: (_, i) => ListTile(
-                    dense: true,
-                    title: Text(
-                      history[i]["label"],
-                      style: const TextStyle(
-                        fontFamily: 'PlusJakartaSans',
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.emeraldDeepColor,
-                      ),
-                    ),
-                    subtitle: Text(
-                      "${history[i]["day"]}, ${history[i]["date"]} at ${history[i]["time"]}",
-                      style: const TextStyle(
-                        fontFamily: 'PlusJakartaSans',
-                        fontSize: 12,
-                        color: Colors.black45,
-                      ),
-                    ),
-                  ),
+            shrinkWrap: true,
+            itemCount: history.length,
+            separatorBuilder: (_, __) => Divider(height: 1, color: colors.border),
+            itemBuilder: (_, i) => ListTile(
+              dense: true,
+              title: Text(
+                history[i]["label"],
+                textDirection: TextDirection.rtl,
+                style: TextStyle(
+                  fontFamily: 'Amiri',
+                  fontWeight: FontWeight.w600,
+                  color: colors.textPrimary,
                 ),
+              ),
+              subtitle: Text(
+                "${history[i]["day"]}, ${history[i]["date"]} at ${history[i]["time"]}",
+                style: TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 12,
+                  color: colors.textPrimary.withValues(alpha: 0.8),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-/// Header card: tasbih-style bead ring + completion summary.
-/// This is the screen's signature element — ties the progress metaphor
-/// back to the physical counting-beads practice the app is built around.
 class _ProgressHeaderCard extends StatelessWidget {
   const _ProgressHeaderCard({
     required this.completed,
@@ -306,26 +315,20 @@ class _ProgressHeaderCard extends StatelessWidget {
 
   final int completed;
   final int total;
-  final double percentage; // 0-100
+  final double percentage;
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.emeraldDeepColor, AppColors.emeraldColor],
+          colors: [colors.headerGradientEnd, colors.headerGradientEnd],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.emeraldDeepColor.withValues(alpha: .25),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
       ),
       child: Row(
         children: [
@@ -333,7 +336,11 @@ class _ProgressHeaderCard extends StatelessWidget {
             height: 84,
             width: 84,
             child: CustomPaint(
-              painter: _TasbihRingPainter(fraction: percentage / 100),
+              painter: _TasbihRingPainter(
+                fraction: percentage / 100,
+                filledColor: colors.gold,
+                emptyColor: Colors.white.withValues(alpha: 0.24),
+              ),
               child: Center(
                 child: Text(
                   '${percentage.round()}%',
@@ -352,10 +359,10 @@ class _ProgressHeaderCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'YOUR PROGRESS',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: Colors.white.withValues(alpha: 0.70),
                     fontSize: 11,
                     letterSpacing: 1.6,
                     fontWeight: FontWeight.w700,
@@ -375,10 +382,10 @@ class _ProgressHeaderCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   completed == total
-                      ? 'All wazaif completed — MashaAllah'
+                      ? 'All completed — MashaAllah'
                       : '${total - completed} remaining',
                   style: TextStyle(
-                    color: AppColors.antiqueGoldColor,
+                    color: colors.gold,
                     fontSize: 12.5,
                     fontWeight: FontWeight.w600,
                     fontFamily: 'PlusJakartaSans',
@@ -393,13 +400,19 @@ class _ProgressHeaderCard extends StatelessWidget {
   }
 }
 
-/// Draws a ring of small bead-like dots (tasbih), filling gold→emerald
-/// as more dots complete, instead of a plain circular progress arc.
 class _TasbihRingPainter extends CustomPainter {
-  _TasbihRingPainter({required this.fraction});
+  // CustomPainter has no BuildContext, so the colors it needs must be
+  // passed in through the constructor instead of `context.appColors`.
+  _TasbihRingPainter({
+    required this.fraction,
+    required this.filledColor,
+    required this.emptyColor,
+  });
 
-  final double fraction; // 0.0 - 1.0
-  static const int beadCount = 33; // traditional tasbih count
+  final double fraction;
+  final Color filledColor;
+  final Color emptyColor;
+  static const int beadCount = 33;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -413,23 +426,23 @@ class _TasbihRingPainter extends CustomPainter {
         center.dx + radius * math.cos(angle),
         center.dy + radius * math.sin(angle),
       );
-
       final bool isFilled = i < filledBeads;
       final paint = Paint()
-        ..color = isFilled ? AppColors.antiqueGoldColor : Colors.white24
+        ..color = isFilled ? filledColor : emptyColor
         ..style = PaintingStyle.fill;
-
       canvas.drawCircle(beadCenter, isFilled ? 3.2 : 2.4, paint);
     }
   }
 
   @override
   bool shouldRepaint(covariant _TasbihRingPainter oldDelegate) =>
-      oldDelegate.fraction != fraction;
+      oldDelegate.fraction != fraction ||
+          oldDelegate.filledColor != filledColor ||
+          oldDelegate.emptyColor != emptyColor;
 }
 
-class _WazifaTile extends StatelessWidget {
-  const _WazifaTile({
+class _ChecklistTile extends StatelessWidget {
+  const _ChecklistTile({
     required this.index,
     required this.label,
     required this.isChecked,
@@ -443,6 +456,7 @@ class _WazifaTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
       child: AnimatedContainer(
@@ -450,24 +464,22 @@ class _WazifaTile extends StatelessWidget {
         curve: Curves.easeOut,
         decoration: BoxDecoration(
           color: isChecked
-              ? AppColors.emeraldDeepColor.withValues(alpha: .06)
-              : Colors.white,
+              ? colors.emeraldDeep.withValues(alpha: .06)
+              : colors.cardBackground,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isChecked
-                ? AppColors.emeraldColor.withValues(alpha: .35)
-                : Colors.grey.shade200,
+            color: isChecked ? colors.emerald.withValues(alpha: .35) : colors.border,
             width: 1.2,
           ),
           boxShadow: isChecked
               ? []
               : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: .04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Material(
           color: Colors.transparent,
@@ -489,15 +501,12 @@ class _WazifaTile extends StatelessWidget {
                         fontSize: 18,
                         fontFamily: 'Amiri',
                         fontWeight: FontWeight.bold,
+                        height: 1.5,
                         color: isChecked
-                            ? AppColors.emeraldDeepColor.withValues(alpha: .55)
-                            : AppColors.emeraldDeepColor,
-                        decoration: isChecked
-                            ? TextDecoration.lineThrough
-                            : null,
-                        decorationColor: AppColors.emeraldDeepColor.withValues(
-                          alpha: .35,
-                        ),
+                            ? colors.textPrimary.withValues(alpha: .55)
+                            : colors.textPrimary,
+                        decoration: isChecked ? TextDecoration.lineThrough : null,
+                        decorationColor: colors.emeraldDeep.withValues(alpha: .35),
                       ),
                     ),
                   ),
@@ -509,15 +518,15 @@ class _WazifaTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: isChecked
-                          ? AppColors.antiqueGoldColor.withValues(alpha: .18)
-                          : AppColors.antiqueGoldColor.withValues(alpha: .12),
+                          ? colors.gold.withValues(alpha: .18)
+                          : colors.gold.withValues(alpha: .12),
                     ),
                     child: Text(
                       '${index + 1}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.5,
                         fontFamily: 'SpaceGrotesk',
-                        color: AppColors.emeraldDeepColor,
+                        color: colors.emeraldDeep,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -532,9 +541,6 @@ class _WazifaTile extends StatelessWidget {
   }
 }
 
-/// Custom checkbox — replaces Flutter's built-in Checkbox so the
-/// completed state always shows emeraldDeepColor + gold check, with no
-/// grey "disabled" fallback.
 class _CircleCheckbox extends StatelessWidget {
   const _CircleCheckbox({required this.isChecked});
 
@@ -542,6 +548,7 @@ class _CircleCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 220),
       curve: Curves.easeOut,
@@ -549,12 +556,10 @@ class _CircleCheckbox extends StatelessWidget {
       width: 28,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isChecked ? AppColors.emeraldDeepColor : Colors.white,
-        border: Border.all(color: AppColors.emeraldDeepColor, width: 1.6),
+        color: isChecked ? colors.emeraldDeep : colors.cardBackground,
+        border: Border.all(color: colors.emeraldDeep, width: 1.6),
       ),
-      child: isChecked
-          ? const Icon(Icons.check, size: 17, color: AppColors.antiqueGoldColor)
-          : null,
+      child: isChecked ? Icon(Icons.check, size: 17, color: colors.gold) : null,
     );
   }
 }

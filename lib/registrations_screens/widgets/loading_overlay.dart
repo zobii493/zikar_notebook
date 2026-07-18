@@ -11,12 +11,12 @@ class LoadingOverlay extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       opacity: 1,
       child: Container(
-        color: Colors.black.withOpacity(0.15),
+        color: Colors.black.withValues(alpha: 0.15),
         child: Center(
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.whiteColor,
               borderRadius: BorderRadius.circular(20),
               boxShadow: const [
                 BoxShadow(

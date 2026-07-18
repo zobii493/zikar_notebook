@@ -6,6 +6,7 @@ import 'package:naqashbandi_shazli/registrations_screens/widgets/auth_textfield.
 import 'package:naqashbandi_shazli/registrations_screens/widgets/bismillah_banner.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
+import '../core/app_theme_colors.dart';
 import '../utils/responsive.dart';
 import '../utils/snackbar_utils.dart';
 import '../viewmodel/auth_viewmodels/signup_viewmodel.dart';
@@ -29,13 +30,14 @@ class _SignupView extends StatelessWidget {
   Future<void> _signUp(BuildContext context) async {
     final viewModel = context.read<SignupViewModel>();
     final result = await viewModel.signUp();
+    final colors = context.appColors;
 
     if (!context.mounted) return;
 
     if (result.success) {
       context.showTopSnackBar(
         result.message ?? 'Account created successfully!',
-        AppColors.antiqueGoldColor,
+        colors.gold,
       );
       Navigator.pushReplacement(
         context,
@@ -49,9 +51,10 @@ class _SignupView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<SignupViewModel>();
+    final colors = context.appColors;
 
     return Scaffold(
-      backgroundColor: AppColors.ivoryColor,
+      backgroundColor: colors.background,
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -73,7 +76,7 @@ class _SignupView extends StatelessWidget {
                         controller: viewModel.usernameController,
                         hint: 'Username',
                         icon: FontAwesomeIcons.solidUser,
-                        iconBg: AppColors.emeraldDeepColor,
+                        iconBg: colors.emeraldDeep,
                         keyboardType: TextInputType.name,
                         validator: viewModel.validateUsername,
                       ),
@@ -93,7 +96,7 @@ class _SignupView extends StatelessWidget {
                         controller: viewModel.passwordController,
                         hint: 'Password',
                         icon: FontAwesomeIcons.lock,
-                        iconBg: AppColors.antiqueGoldColor,
+                        iconBg: colors.gold,
                         obscureText: !viewModel.passwordVisible,
                         suffixIcon: IconButton(
                           onPressed: viewModel.togglePasswordVisibility,
@@ -101,7 +104,7 @@ class _SignupView extends StatelessWidget {
                             viewModel.passwordVisible
                                 ? FontAwesomeIcons.solidEye
                                 : FontAwesomeIcons.solidEyeSlash,
-                            color: Colors.black26,
+                            color: colors.textSecondary,
                             size: 18,
                           ),
                         ),
@@ -121,7 +124,7 @@ class _SignupView extends StatelessWidget {
                             viewModel.confirmPasswordVisible
                                 ? FontAwesomeIcons.solidEye
                                 : FontAwesomeIcons.solidEyeSlash,
-                            color: Colors.black26,
+                            color: colors.textSecondary,
                             size: 18,
                           ),
                         ),
@@ -150,21 +153,21 @@ class _SignupView extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
+                          Text(
                             'Already have an account? ',
                             style: TextStyle(
                               fontFamily: 'PlusJakartaSans',
-                              color: Colors.black54,
+                              color: colors.textSecondary,
                             ),
                           ),
                           InkWell(
                             onTap: () => Navigator.pop(context),
-                            child: const Text(
+                            child: Text(
                               'Login',
                               style: TextStyle(
                                 fontFamily: 'PlusJakartaSans',
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.emeraldDeepColor,
+                                color: colors.emeraldDeep,
                               ),
                             ),
                           ),

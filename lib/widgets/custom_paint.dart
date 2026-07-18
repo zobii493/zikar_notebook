@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../core/app_colors.dart';
+
 class CrosshatchPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
+      ..color = AppColors.whiteColor.withValues(alpha: 0.05)
       ..strokeWidth = 1;
 
     const spacing = 18.0;

@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../viewmodel/ismezat_kalmasharif_provider.dart';
 import 'ismezat_kalmasharif.dart';
 
-class Kalmashareef extends StatefulWidget {
+class Kalmashareef extends StatelessWidget {
   const Kalmashareef({super.key});
 
   @override
-  State<Kalmashareef> createState() => _KalmashareefState();
-}
-
-class _KalmashareefState extends State<Kalmashareef> {
-  @override
   Widget build(BuildContext context) {
-    return IsmezatAndkalmaSarif(
-        title: 'لَا إِلٰهَ إِلَّا الله',
+    return ChangeNotifierProvider(
+      create: (_) => IsmezatProvider(),
+      child: const IsmezatAndkalmaSarif(
+        title: 'لَا إِلٰهَ إِلَّا الله',
         subtitle: 'Kalma Sharif',
         collectionName: 'KalmaSharifData',
-        historyCollection: 'kalmasharifHistory');
+        historyCollection: 'kalmasharifHistory',
+      ),
+    );
   }
 }
-
-

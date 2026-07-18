@@ -1,10 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:naqashbandi_shazli/screens/counter_screen/widgets/dotted_progress_circle.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_theme_colors.dart';
+import '../../utils/snackbar_utils.dart';
 import '../../viewmodel/counter_provider.dart';
-import '../../widgets/top_snack_bar.dart';
 import '../../widgets/custom_paint.dart';
 import 'package:vibration/vibration.dart';
 
@@ -25,25 +27,26 @@ class _CounterPageState extends State<CounterPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final colors = context.appColors;
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: colors.cardBackground,
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Edit Target Value',
                 style: TextStyle(
                   fontFamily: 'PlusJakartaSans',
-                  color: AppColors.emeraldDeepColor,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 'TARGET VALUE',
                 style: TextStyle(
                   fontFamily: 'PlusJakartaSans',
-                  color: AppColors.emeraldDeepColor,
+                  color: colors.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -54,13 +57,13 @@ class _CounterPageState extends State<CounterPage> {
             keyboardType: TextInputType.number,
             style: TextStyle(
               fontFamily: 'SpaceGrotesk',
-              color: AppColors.emeraldDeepColor,
+              color: colors.headingPrimary,
               fontWeight: FontWeight.bold,
             ),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                borderSide: BorderSide(color: AppColors.ivoryColor, width: 2),
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                borderSide: BorderSide(color: colors.background, width: 2),
               ),
             ),
           ),
@@ -68,20 +71,20 @@ class _CounterPageState extends State<CounterPage> {
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.ivoryColor,
+                backgroundColor: colors.background,
                 minimumSize: const Size(100, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                side: BorderSide(color: AppColors.ivoryColor, width: 2),
+                side: BorderSide(color: colors.background, width: 2),
                 textStyle: const TextStyle(
                   fontSize: 18,
                   fontFamily: 'PlusJakartaSans',
                   fontWeight: FontWeight.bold,
                 ),
-                foregroundColor: AppColors.emeraldDeepColor,
+                foregroundColor: colors.emeraldDeep,
               ),
-              child: const Text('Cancel'),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.maroonColor)),
             ),
             ElevatedButton(
               onPressed: () {
@@ -97,17 +100,17 @@ class _CounterPageState extends State<CounterPage> {
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(100, 50),
-                backgroundColor: AppColors.emeraldDeepColor,
+                backgroundColor: colors.emeraldDeep,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                side: BorderSide(color: AppColors.emeraldDeepColor, width: 2),
+                side: BorderSide(color: colors.emeraldDeep, width: 2),
                 textStyle: const TextStyle(
                   fontSize: 18,
                   fontFamily: 'PlusJakartaSans',
                   fontWeight: FontWeight.bold,
                 ),
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.whiteColor,
               ),
               child: const Text('Update'),
             ),
@@ -118,14 +121,44 @@ class _CounterPageState extends State<CounterPage> {
   }
 
   void _showErrorDialog(BuildContext context) {
+    final colors = context.appColors;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Invalid Value'),
-        content: const Text('Target must be greater than 0'),
+        backgroundColor: colors.cardBackground,
+        title: Text(
+          'Invalid Value',
+          style: TextStyle(
+            fontFamily: 'PlusJakartaSans',
+            fontWeight: FontWeight.bold,
+            color: colors.textPrimary,
+          ),
+        ),
+        content: Text(
+          'Target must be greater than 0',
+          style: TextStyle(
+            fontFamily: 'PlusJakartaSans',
+            height: 1.4,
+            color: colors.textSecondary,
+          ),
+        ),
         actions: [
-          TextButton(
+          ElevatedButton(
             onPressed: () => Navigator.pop(ctx),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(100, 50),
+              backgroundColor: colors.emeraldDeep,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              side: BorderSide(color: colors.emeraldDeep, width: 2),
+              textStyle: const TextStyle(
+                fontSize: 18,
+                fontFamily: 'PlusJakartaSans',
+                fontWeight: FontWeight.bold,
+              ),
+              foregroundColor: AppColors.whiteColor,
+            ),
             child: const Text('OK'),
           ),
         ],
@@ -141,11 +174,12 @@ class _CounterPageState extends State<CounterPage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CounterProvider>(context);
+    final colors = context.appColors;
     double percent = provider.maxValue > 0
         ? provider.counter / provider.maxValue
         : 0;
     return Scaffold(
-      backgroundColor: AppColors.ivoryColor,
+      backgroundColor: colors.background,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -162,8 +196,8 @@ class _CounterPageState extends State<CounterPage> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          AppColors.emeraldDeepColor,
-                          AppColors.emeraldColor,
+                          colors.headerGradientStart,
+                          colors.headerGradientEnd,
                         ],
                       ),
                     ),
@@ -182,31 +216,29 @@ class _CounterPageState extends State<CounterPage> {
                             children: [
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'Goal Progress',
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'PlusJakartaSans',
-                                      color: Colors.white,
+                                      color: colors.headingSecondary,
                                     ),
                                   ),
                                   ElevatedButton(
                                     onPressed: () => _showEditDialog(context),
                                     style: ElevatedButton.styleFrom(
                                       elevation: 10,
-                                      backgroundColor:
-                                      AppColors.antiqueGoldColor,
+                                      backgroundColor: colors.gold,
                                       foregroundColor: Colors.blue,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(25),
+                                        borderRadius: BorderRadius.circular(25),
                                       ),
                                     ),
                                     child: const Text(
-                                      'Edit',
+                                      'Set Target',
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontFamily: 'PlusJakartaSans',
@@ -230,7 +262,7 @@ class _CounterPageState extends State<CounterPage> {
                   child: Container(
                     height: 30,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.whiteColor,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: AppColors.maroonColor,
@@ -261,7 +293,11 @@ class _CounterPageState extends State<CounterPage> {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          const Text('.'),
+                          const Icon(
+                            Icons.circle,
+                            size: 4,
+                            color: AppColors.maroonColor,
+                          ),
                           const SizedBox(width: 10),
                           Text(
                             provider.maxValue.toString(),
@@ -286,8 +322,6 @@ class _CounterPageState extends State<CounterPage> {
                 current: provider.counter,
               ),
             ),
-
-            // ================= MODERN CIRCULAR TAP-TO-COUNT BUTTON =================
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Center(
@@ -300,13 +334,12 @@ class _CounterPageState extends State<CounterPage> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: AppColors.antiqueGoldColor.withOpacity(0.5),
+                          color: colors.gold.withValues(alpha: 0.5),
                           width: 2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color:
-                            AppColors.emeraldDeepColor.withOpacity(0.35),
+                            color: colors.emeraldDeep.withValues(alpha: 0.35),
                             blurRadius: 24,
                             spreadRadius: 2,
                             offset: const Offset(0, 10),
@@ -319,8 +352,7 @@ class _CounterPageState extends State<CounterPage> {
                         color: Colors.transparent,
                         child: InkWell(
                           customBorder: const CircleBorder(),
-                          splashColor:
-                          AppColors.antiqueGoldColor.withOpacity(0.3),
+                          splashColor: colors.gold.withValues(alpha: 0.3),
                           onTap: () async {
                             if (await Vibration.hasVibrator() ?? false) {
                               Vibration.vibrate(duration: 40, amplitude: 150);
@@ -334,8 +366,8 @@ class _CounterPageState extends State<CounterPage> {
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  AppColors.emeraldColor,
-                                  AppColors.emeraldDeepColor,
+                                  colors.headerGradientStart,
+                                  colors.headerGradientEnd,
                                 ],
                               ),
                             ),
@@ -358,7 +390,9 @@ class _CounterPageState extends State<CounterPage> {
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: Colors.white.withOpacity(0.15),
+                                      color: AppColors.whiteColor.withValues(alpha: 
+                                        0.15,
+                                      ),
                                       width: 1,
                                     ),
                                   ),
@@ -366,7 +400,7 @@ class _CounterPageState extends State<CounterPage> {
                                 FaIcon(
                                   FontAwesomeIcons.fingerprint,
                                   size: 52,
-                                  color: AppColors.antiqueGoldColor,
+                                  color: colors.gold,
                                 ),
                               ],
                             ),
@@ -378,7 +412,7 @@ class _CounterPageState extends State<CounterPage> {
                     Text(
                       'TAP TO COUNT',
                       style: TextStyle(
-                        color: AppColors.emeraldDeepColor,
+                        color: colors.emeraldDeep,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.5,
@@ -399,20 +433,20 @@ class _CounterPageState extends State<CounterPage> {
                     showDialog(
                       context: context,
                       builder: (ctx) => AlertDialog(
-                        backgroundColor: Colors.white,
-                        title: const Text(
+                        backgroundColor: colors.cardBackground,
+                        title: Text(
                           'Confirm Reset',
                           style: TextStyle(
                             fontFamily: 'PlusJakartaSans',
-                            color: AppColors.emeraldDeepColor,
+                            color: colors.textPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        content: const Text(
+                        content: Text(
                           'Do you want to reset the counter?',
                           style: TextStyle(
                             fontFamily: 'PlusJakartaSans',
-                            color: AppColors.emeraldDeepColor,
+                            color: colors.textSecondary,
                           ),
                         ),
                         actions: [
@@ -424,18 +458,18 @@ class _CounterPageState extends State<CounterPage> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               side: BorderSide(
-                                color: AppColors.ivoryColor,
+                                color: colors.background,
                                 width: 2,
                               ),
-                              foregroundColor: AppColors.emeraldDeepColor,
-                              backgroundColor: AppColors.ivoryColor,
+                              foregroundColor: colors.emeraldDeep,
+                              backgroundColor: colors.background,
                               textStyle: const TextStyle(
                                 fontSize: 18,
                                 fontFamily: 'PlusJakartaSans',
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            child: const Text('No'),
+                            child: const Text('No', style: TextStyle(color: AppColors.maroonColor)),
                           ),
                           ElevatedButton(
                             onPressed: () {
@@ -448,11 +482,11 @@ class _CounterPageState extends State<CounterPage> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               side: BorderSide(
-                                color: AppColors.emeraldDeepColor,
+                                color: colors.emeraldDeep,
                                 width: 2,
                               ),
-                              foregroundColor: Colors.white,
-                              backgroundColor: AppColors.emeraldDeepColor,
+                              foregroundColor: AppColors.whiteColor,
+                              backgroundColor: colors.emeraldDeep,
                               textStyle: const TextStyle(
                                 fontSize: 18,
                                 fontFamily: 'PlusJakartaSans',
@@ -483,27 +517,16 @@ class _CounterPageState extends State<CounterPage> {
                 ElevatedButton(
                   onPressed: () async {
                     bool success = await provider.saveData();
-                    final overlay = Overlay.of(context);
-                    final overlayEntry = OverlayEntry(
-                      builder: (context) => Positioned(
-                        top: MediaQuery.of(context).padding.top,
-                        left: 8,
-                        right: 8,
-                        child: TopSnackBar(
-                          message: success
-                              ? 'Record saved successfully!'
-                              : 'Failed to save record.',
-                          backgroundColor: success
-                              ? Colors.amber.shade300
-                              : Colors.red,
-                        ),
-                      ),
-                    );
+                      if (!context.mounted) return;
 
-                    overlay.insert(overlayEntry);
-
-                    await Future.delayed(const Duration(seconds: 3));
-                    overlayEntry.remove();
+                      context.showTopSnackBar(
+                        success
+                            ? 'Record saved successfully!'
+                            : 'Failed to save record.',
+                        success
+                            ? AppColors.antiqueGoldColor
+                            : AppColors.maroonColor,
+                      );
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150, 50),
@@ -517,7 +540,10 @@ class _CounterPageState extends State<CounterPage> {
                     ),
                     backgroundColor: AppColors.emeraldDeepColor,
                   ),
-                  child: const Text('Save', style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                    'Save',
+                    style: TextStyle(color: AppColors.whiteColor),
+                  ),
                 ),
               ],
             ),
@@ -529,117 +555,3 @@ class _CounterPageState extends State<CounterPage> {
   }
 }
 
-class DottedProgressCircle extends StatelessWidget {
-  final double percent; // 0.0 - 1.0
-  final int current;
-  final int dotCount;
-  final double dotRadius;
-  final Color? activeColor;
-  final Color? inactiveColor;
-  final String label;
-
-  const DottedProgressCircle({
-    super.key,
-    required this.percent,
-    required this.current,
-    this.dotCount = 36,
-    this.dotRadius = 7,
-    this.activeColor,
-    this.inactiveColor,
-    this.label = 'CURRENT COUNT',
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final double screenWidth = MediaQuery.of(context).size.width;
-        final double size = screenWidth * 0.62;
-
-        return SizedBox(
-          width: size,
-          height: size,
-          child: CustomPaint(
-            painter: _DottedCircularProgressPainter(
-              percent: percent,
-              dotCount: dotCount,
-              dotRadius: dotRadius,
-              activeColor: activeColor ?? AppColors.antiqueGoldColor,
-              inactiveColor: inactiveColor ?? const Color(0xFFDDE8E3),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '$current',
-                    style: const TextStyle(
-                      fontSize: 46,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'SpaceGrotesk',
-                      color: AppColors.emeraldDeepColor,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      letterSpacing: 1.2,
-                      fontFamily: 'PlusJakartaSans',
-                      color: Colors.blueGrey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _DottedCircularProgressPainter extends CustomPainter {
-  final double percent;
-  final int dotCount;
-  final double dotRadius;
-  final Color activeColor;
-  final Color inactiveColor;
-
-  _DottedCircularProgressPainter({
-    required this.percent,
-    required this.dotCount,
-    required this.dotRadius,
-    required this.activeColor,
-    required this.inactiveColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Offset center = Offset(size.width / 2, size.height / 2);
-    final double radius = (size.shortestSide / 2) - dotRadius;
-    final int activeDots = (dotCount * percent).round();
-
-    for (int i = 0; i < dotCount; i++) {
-      final double angle = -pi / 2 + (2 * pi / dotCount) * i;
-      final double dx = center.dx + radius * cos(angle);
-      final double dy = center.dy + radius * sin(angle);
-
-      final Paint paint = Paint()
-        ..color = i < activeDots ? activeColor : inactiveColor
-        ..style = PaintingStyle.fill;
-
-      canvas.drawCircle(Offset(dx, dy), dotRadius, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _DottedCircularProgressPainter oldDelegate) {
-    return oldDelegate.percent != percent ||
-        oldDelegate.dotCount != dotCount ||
-        oldDelegate.dotRadius != dotRadius ||
-        oldDelegate.activeColor != activeColor ||
-        oldDelegate.inactiveColor != inactiveColor;
-  }
-}

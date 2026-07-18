@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../core/app_colors.dart';
+import '../../core/app_theme_colors.dart';
 import '../../utils/responsive.dart';
 import 'gradient_crosshatch_background.dart';
 
@@ -19,6 +21,7 @@ class AuthHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final height = context.responsiveHeight(0.2).clamp(140.0, 200.0);
+    final colors = context.appColors;
 
     return SizedBox(
       width: double.infinity,
@@ -37,7 +40,7 @@ class AuthHeader extends StatelessWidget {
                     onTap: () => Navigator.pop(context),
                     child: const FaIcon(
                       FontAwesomeIcons.angleLeft,
-                      color: Colors.white,
+                      color: AppColors.whiteColor,
                       size: 20,
                     ),
                   ),
@@ -49,7 +52,7 @@ class AuthHeader extends StatelessWidget {
                   fontSize: context.responsiveFont(12),
                   fontWeight: FontWeight.w600,
                   letterSpacing: 2,
-                  color: Colors.white70,
+                  color: AppColors.whiteColor.withValues(alpha: 0.70),
                 ),
               ),
               const SizedBox(height: 6),
@@ -59,7 +62,7 @@ class AuthHeader extends StatelessWidget {
                   fontFamily: 'PlusJakartaSans',
                   fontSize: context.responsiveFont(24),
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: colors.headingSecondary,
                 ),
               ),
             ],

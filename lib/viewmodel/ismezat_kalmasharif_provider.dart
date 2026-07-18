@@ -34,6 +34,8 @@ class IsmezatProvider with ChangeNotifier {
     User? user = _auth.currentUser;
     if (user == null) return;
 
+    _resetToDefaults(); // ensure no leftover data from another collection
+
     final doc = await _firestore
         .collection('users')
         .doc(user.uid)
@@ -63,13 +65,37 @@ class IsmezatProvider with ChangeNotifier {
       isSundayAdded = data['isSundayAdded'] ?? isSundayAdded;
 
       if (data[historyCollection] != null) {
-        zikarHistory =
-        List<Map<String, dynamic>>.from(data[historyCollection]);
+        zikarHistory = List<Map<String, dynamic>>.from(data[historyCollection]);
       }
       _calculatePercentage();
     }
 
     notifyListeners();
+  }
+
+  void _resetToDefaults() {
+    totalZikarGoal = 12500000;
+    completedZikar = 0;
+    weeklyTotal = 0;
+    completedPercentage = 0;
+
+    mondayZikar = 0;
+    tuesdayZikar = 0;
+    wednesdayZikar = 0;
+    thursdayZikar = 0;
+    fridayZikar = 0;
+    saturdayZikar = 0;
+    sundayZikar = 0;
+
+    isMondayAdded = false;
+    isTuesdayAdded = false;
+    isWednesdayAdded = false;
+    isThursdayAdded = false;
+    isFridayAdded = false;
+    isSaturdayAdded = false;
+    isSundayAdded = false;
+
+    zikarHistory = [];
   }
 
   void _calculatePercentage() {

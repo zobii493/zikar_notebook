@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../viewmodel/ismezat_kalmasharif_provider.dart';
 import 'ismezat_kalmasharif.dart';
 
 class NoteBook extends StatelessWidget {
@@ -6,11 +8,14 @@ class NoteBook extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IsmezatAndkalmaSarif(
+    return ChangeNotifierProvider(
+      create: (_) => IsmezatProvider(),
+      child: const IsmezatAndkalmaSarif(
         title: 'اسم ذات اللہ',
         subtitle: 'ALLAH',
         collectionName: 'IsmeZatData',
-        historyCollection: 'ismezatzikarHistory');
+        historyCollection: 'ismezatzikarHistory',
+      ),
+    );
   }
 }
-

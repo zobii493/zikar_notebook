@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../core/app_colors.dart';
+import '../../core/app_theme_colors.dart';
 import '../../utils/responsive.dart';
 
 class AuthTextField extends StatelessWidget {
@@ -30,13 +30,14 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -46,32 +47,28 @@ class AuthTextField extends StatelessWidget {
         controller: controller,
         obscureText: obscureText,
         keyboardType: keyboardType,
-        cursorColor: AppColors.emeraldDeepColor,
+        cursorColor: colors.emeraldDeep,
         style: TextStyle(
           fontFamily: 'PlusJakartaSans',
           fontSize: context.responsiveFont(15),
-          color: Colors.black87,
+          color: colors.textPrimary,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: const TextStyle(
+          hintStyle: TextStyle(
             fontFamily: 'PlusJakartaSans',
-            color: Colors.black38,
+            color: colors.textSecondary,
           ),
           errorText: errorText,
           filled: true,
-          fillColor: Colors.white,
+          fillColor: colors.cardBackground,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: colors.emerald,width: 1),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: iconBg.withOpacity(0.5), width: 1.4),
+            borderSide: BorderSide(color: iconBg.withValues(alpha: 0.5), width: 1.4),
           ),
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
           prefixIcon: Padding(
@@ -80,7 +77,7 @@ class AuthTextField extends StatelessWidget {
               width: 30,
               height: 30,
               decoration: BoxDecoration(
-                color: iconBg.withOpacity(0.12),
+                color: iconBg.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: Center(child: FaIcon(icon, size: 15, color: iconBg)),

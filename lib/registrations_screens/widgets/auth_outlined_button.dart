@@ -28,7 +28,7 @@ class AuthOutlinedButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.whiteColor,
         ),
         child: Text(
           label,

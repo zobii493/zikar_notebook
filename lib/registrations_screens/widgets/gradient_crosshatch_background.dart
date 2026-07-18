@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../core/app_colors.dart';
-import '../../utils/responsive.dart';
+import '../../core/app_theme_colors.dart';
 import '../../widgets/custom_paint.dart';
 
 class GradientCrosshatchBackground extends StatelessWidget {
@@ -20,6 +18,7 @@ class GradientCrosshatchBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final content = Stack(
       children: [
         Positioned.fill(
@@ -37,7 +36,7 @@ class GradientCrosshatchBackground extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.black.withOpacity(0.08),
+                    Colors.black.withValues(alpha: 0.08),
                   ],
                 ),
               ),
@@ -49,8 +48,8 @@ class GradientCrosshatchBackground extends StatelessWidget {
 
     final decorated = Container(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.emeraldDeepColor, AppColors.emeraldColor],
+        gradient: LinearGradient(
+          colors: [colors.headerGradientStart,colors.headerGradientEnd],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

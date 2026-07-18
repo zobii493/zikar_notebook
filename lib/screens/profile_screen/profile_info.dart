@@ -3,9 +3,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:naqashbandi_shazli/screens/profile_screen/faqs.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_theme_colors.dart';
 import '../../model/profile_model.dart';
 import '../../registrations_screens/login.dart';
-import '../../viewmodel/profile_vm.dart';
+import '../../viewmodel/profile_provider.dart';
+import '../../viewmodel/theme_provider.dart';
 import '../../widgets/custom_paint.dart';
 import 'helps_supports.dart';
 
@@ -25,36 +27,40 @@ class _ProfileView extends StatelessWidget {
   const _ProfileView();
 
   Future<void> _confirmLogout(BuildContext context, ProfileViewModel vm) async {
+    final colors = context.appColors;
     final shouldLogout = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: colors.cardBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        title: const Text(
+        title: Text(
           'Logout',
           style: TextStyle(
             fontFamily: 'PlusJakartaSans',
-            color: AppColors.emeraldDeepColor,
+            color: colors.textPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
-        content: const Text(
+        content: Text(
           'Are you sure you want to logout?',
-          style: TextStyle(fontFamily: 'PlusJakartaSans'),
+          style: TextStyle(
+            fontFamily: 'PlusJakartaSans',
+            color: colors.textPrimary,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            style: TextButton.styleFrom(foregroundColor: Colors.black54),
+            style: TextButton.styleFrom(foregroundColor: colors.textSecondary),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.maroonColor,
+              backgroundColor: colors.maroon,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -78,9 +84,10 @@ class _ProfileView extends StatelessWidget {
   }
 
   void _openAvatarPicker(BuildContext context, ProfileViewModel vm) {
+    final colors = context.appColors;
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: colors.cardBackground,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -95,18 +102,18 @@ class _ProfileView extends StatelessWidget {
                   width: 44,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: Colors.black12,
+                    color: colors.border,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 const SizedBox(height: 18),
-                const Text(
+                Text(
                   'Choose Your Avatar',
                   style: TextStyle(
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.emeraldDeepColor,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -135,21 +142,15 @@ class _ProfileView extends StatelessWidget {
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          // ============ selected = gold, default = emeraldDeep ============
-                          color: isSelected
-                              ? AppColors.antiqueGoldColor
-                              : AppColors.emeraldColor,
+                          color: isSelected ? colors.gold : AppColors.emeraldColor,
                           border: Border.all(
-                            color: isSelected
-                                ? AppColors.antiqueGoldColor
-                                : Colors.transparent,
+                            color: isSelected ? colors.gold : Colors.transparent,
                             width: 3,
                           ),
                           boxShadow: isSelected
                               ? [
                             BoxShadow(
-                              color: AppColors.antiqueGoldColor
-                                  .withOpacity(0.4),
+                              color: colors.gold.withValues(alpha: 0.4),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -172,23 +173,25 @@ class _ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<ProfileViewModel>();
+    final themeProvider = context.watch<ThemeProvider>();
+    final colors = context.appColors;
 
     if (vm.isLoading) {
-      return const Scaffold(
-        backgroundColor: AppColors.ivoryColor,
+      return Scaffold(
+        backgroundColor: colors.background,
         body: Center(
-          child: CircularProgressIndicator(color: AppColors.emeraldDeepColor),
+          child: CircularProgressIndicator(color: colors.emeraldDeep),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: AppColors.ivoryColor,
+      backgroundColor: colors.background,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ================= HEADER (matches counter page style) =================
+            // HEADER
             Stack(
               clipBehavior: Clip.none,
               alignment: Alignment.topCenter,
@@ -200,10 +203,7 @@ class _ProfileView extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [
-                        AppColors.emeraldDeepColor,
-                        AppColors.emeraldColor,
-                      ],
+                      colors: [colors.headerGradientStart, colors.headerGradientEnd],
                     ),
                   ),
                   child: Stack(
@@ -219,14 +219,14 @@ class _ProfileView extends StatelessWidget {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
+                            children: [
                               Text(
                                 'My Profile',
                                 style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'PlusJakartaSans',
-                                  color: Colors.white,
+                                  color: colors.goldLight,
                                 ),
                               ),
                             ],
@@ -237,7 +237,7 @@ class _ProfileView extends StatelessWidget {
                   ),
                 ),
 
-                // ================= MAIN SELECTED AVATAR (half in/out of header) =================
+                // AVATAR
                 Positioned(
                   top: 130,
                   child: GestureDetector(
@@ -251,9 +251,8 @@ class _ProfileView extends StatelessWidget {
                           padding: const EdgeInsets.all(18),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            // Selected avatar's circle = gold background
-                            color: AppColors.ivoryColor,
-                            border: Border.all(color: Colors.white, width: 4),
+                            color: colors.background,
+                            border: Border.all(color: colors.surface, width: 4),
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.black26,
@@ -262,7 +261,7 @@ class _ProfileView extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: Image.asset(vm.selectedAvatar.asset,),
+                          child: Image.asset(vm.selectedAvatar.asset),
                         ),
                         Positioned(
                           bottom: 0,
@@ -272,8 +271,8 @@ class _ProfileView extends StatelessWidget {
                             width: 34,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: AppColors.emeraldDeepColor,
-                              border: Border.all(color: Colors.white, width: 2),
+                              color: colors.emeraldDeep,
+                              border: Border.all(color: colors.surface, width: 2),
                             ),
                             child: const Icon(
                               Icons.camera_alt_rounded,
@@ -289,16 +288,16 @@ class _ProfileView extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 70), // room for the overlapping avatar
+            const SizedBox(height: 70),
 
             Center(
               child: Text(
                 vm.username ?? 'Username',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'PlusJakartaSans',
-                  color: AppColors.emeraldDeepColor,
+                  color: colors.headingPrimary,
                 ),
               ),
             ),
@@ -306,27 +305,28 @@ class _ProfileView extends StatelessWidget {
             Center(
               child: Text(
                 vm.email ?? 'example@email.com',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontFamily: 'PlusJakartaSans',
-                  color: Colors.black54,
+                  color: colors.textSecondary,
                 ),
               ),
             ),
 
             const SizedBox(height: 28),
 
-            // ================= APPEARANCE SECTION =================
+            // APPEARANCE SECTION
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colors.cardBackground,
                   borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: colors.border),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -335,13 +335,13 @@ class _ProfileView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Appearance',
                       style: TextStyle(
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.emeraldDeepColor,
+                        color: colors.headingPrimary,
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -350,22 +350,22 @@ class _ProfileView extends StatelessWidget {
                         _ThemeOption(
                           label: 'Light',
                           icon: Icons.wb_sunny_rounded,
-                          isSelected: vm.themeMode == ThemeMode.light,
-                          onTap: () => vm.setThemeMode(ThemeMode.light),
+                          isSelected: themeProvider.themeMode == ThemeMode.light,
+                          onTap: () => themeProvider.setThemeMode(ThemeMode.light),
                         ),
                         const SizedBox(width: 10),
                         _ThemeOption(
                           label: 'Dark',
                           icon: Icons.nightlight_round,
-                          isSelected: vm.themeMode == ThemeMode.dark,
-                          onTap: () => vm.setThemeMode(ThemeMode.dark),
+                          isSelected: themeProvider.themeMode == ThemeMode.dark,
+                          onTap: () => themeProvider.setThemeMode(ThemeMode.dark),
                         ),
                         const SizedBox(width: 10),
                         _ThemeOption(
                           label: 'System',
                           icon: Icons.settings_suggest_rounded,
-                          isSelected: vm.themeMode == ThemeMode.system,
-                          onTap: () => vm.setThemeMode(ThemeMode.system),
+                          isSelected: themeProvider.themeMode == ThemeMode.system,
+                          onTap: () => themeProvider.setThemeMode(ThemeMode.system),
                         ),
                       ],
                     ),
@@ -376,7 +376,7 @@ class _ProfileView extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // ================= OPTIONS LIST =================
+            // OPTIONS LIST
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
@@ -398,9 +398,7 @@ class _ProfileView extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => HelpSupportPage(),
-                        ),
+                        MaterialPageRoute(builder: (context) => HelpSupportPage()),
                       );
                     },
                   ),
@@ -408,7 +406,7 @@ class _ProfileView extends StatelessWidget {
                   ProfileOption(
                     icon: FontAwesomeIcons.arrowRightFromBracket,
                     text: 'Logout',
-                    iconColor: AppColors.maroonColor,
+                    iconColor: colors.maroon,
                     onPressed: () => _confirmLogout(context, vm),
                   ),
                 ],
@@ -438,6 +436,7 @@ class _ThemeOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
@@ -445,19 +444,17 @@ class _ThemeOption extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.emeraldDeepColor
-                : AppColors.ivoryColor,
+            color: isSelected ? colors.emeraldDeep : colors.background,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? AppColors.emeraldDeepColor : Colors.black12,
+              color: isSelected ? colors.emeraldDeep : colors.border,
             ),
           ),
           child: Column(
             children: [
               Icon(
                 icon,
-                color: isSelected ? Colors.white : AppColors.emeraldDeepColor,
+                color: isSelected ? Colors.white : colors.emeraldDeep,
                 size: 22,
               ),
               const SizedBox(height: 6),
@@ -467,8 +464,7 @@ class _ThemeOption extends StatelessWidget {
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color:
-                  isSelected ? Colors.white : AppColors.emeraldDeepColor,
+                  color: isSelected ? Colors.white : colors.emeraldDeep,
                 ),
               ),
             ],
@@ -496,17 +492,19 @@ class ProfileOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return GestureDetector(
       onTap: onPressed,
       child: Container(
         height: 62,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.cardBackground,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: colors.border),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
@@ -519,32 +517,31 @@ class ProfileOption extends StatelessWidget {
               height: 38,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (iconColor ?? AppColors.emeraldDeepColor)
-                    .withOpacity(0.1),
+                color: (iconColor ?? colors.emeraldDeep).withValues(alpha: 0.1),
               ),
               child: Center(
                 child: FaIcon(
                   icon,
                   size: 18,
-                  color: iconColor ?? AppColors.emeraldDeepColor,
+                  color: iconColor ?? colors.emeraldDeep,
                 ),
               ),
             ),
             const SizedBox(width: 14),
             Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontFamily: 'PlusJakartaSans',
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: colors.textPrimary,
               ),
             ),
             const Spacer(),
-            const Icon(
+            Icon(
               Icons.chevron_right_rounded,
               size: 22,
-              color: Colors.black26,
+              color: colors.textSecondary,
             ),
           ],
         ),

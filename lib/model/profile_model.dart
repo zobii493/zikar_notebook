@@ -1,9 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../core/app_colors.dart';
-
-/// Simple data model representing a selectable preset avatar.
-/// Used instead of uploading a custom photo to Firebase Storage.
 class AvatarOption {
   final String asset;
 
@@ -12,8 +6,6 @@ class AvatarOption {
   });
 }
 
-/// Preset avatar catalogue. Add/remove entries here to change the
-/// options shown in the avatar picker bottom sheet.
 final List<AvatarOption> kAvatarOptions = [
   AvatarOption(
     asset: 'assets/avatars/avatar1.png',

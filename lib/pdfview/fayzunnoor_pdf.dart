@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../core/app_colors.dart';
+import '../core/app_theme_colors.dart';
+
 class Fayzunoorpdf extends StatefulWidget {
   final String path;
   final String title;
@@ -22,28 +25,36 @@ class _FayzunoorpdfState extends State<Fayzunoorpdf> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.dispose();
+    });
     super.dispose();
   }
+  
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: AppBar(
         leading: Container(),
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.emeraldDeepColor,
         centerTitle: true,
         title: Text(
           widget.title,
           style: TextStyle(
-              color: Colors.white,
+              color: AppColors.antiqueGoldColor,
               fontSize: 30,
               fontWeight: FontWeight.bold,
-              fontFamily: 'PlusJakartaSans'),
+              fontFamily: 'Amiri'),
         ),
       ),
-      body: SfPdfViewer.asset(
-        widget.path,
-        scrollDirection: PdfScrollDirection.vertical,
+      body: RepaintBoundary(
+        child: SfPdfViewer.asset(
+          widget.path,
+          controller: _controller,
+          scrollDirection: PdfScrollDirection.vertical,
+        ),
       ),
     );
   }

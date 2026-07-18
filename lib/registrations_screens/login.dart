@@ -6,7 +6,8 @@ import 'package:naqashbandi_shazli/registrations_screens/widgets/auth_textfield.
 import 'package:naqashbandi_shazli/registrations_screens/widgets/bismillah_banner.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
-import '../screens/GNav.dart';
+import '../core/app_theme_colors.dart';
+import '../GNav.dart';
 import '../utils/responsive.dart';
 import '../utils/snackbar_utils.dart';
 import '../viewmodel/auth_viewmodels/login_viewmodel.dart';
@@ -30,6 +31,7 @@ class _LoginView extends StatelessWidget {
   const _LoginView();
 
   Future<void> _signIn(BuildContext context) async {
+    final colors = context.appColors;
     final viewModel = context.read<LoginViewModel>();
     final result = await viewModel.signIn();
 
@@ -41,7 +43,7 @@ class _LoginView extends StatelessWidget {
         context,
         MaterialPageRoute(builder: (context) => BottomNavBar()),
       );
-      context.showTopSnackBar('Successfully signed in!', AppColors.antiqueGoldColor);
+      context.showTopSnackBar('Successfully signed in!', colors.gold);
     } else if (result.message != null) {
       context.showTopSnackBar(result.message!, AppColors.maroonColor);
     }
@@ -50,12 +52,13 @@ class _LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<LoginViewModel>();
+    final colors = context.appColors;
 
     return Scaffold(
-      backgroundColor: AppColors.ivoryColor,
+      backgroundColor: colors.background,
       body: RefreshIndicator(
         onRefresh: viewModel.refreshProfileData,
-        color: AppColors.emeraldDeepColor,
+        color: colors.emeraldDeep,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -88,7 +91,7 @@ class _LoginView extends StatelessWidget {
                           controller: viewModel.passwordController,
                           hint: 'Password',
                           icon: FontAwesomeIcons.lock,
-                          iconBg: AppColors.antiqueGoldColor,
+                          iconBg: colors.gold,
                           obscureText: !viewModel.passwordVisible,
                           errorText: viewModel.passwordError,
                           suffixIcon: IconButton(
@@ -97,7 +100,7 @@ class _LoginView extends StatelessWidget {
                               viewModel.passwordVisible
                                   ? FontAwesomeIcons.solidEye
                                   : FontAwesomeIcons.solidEyeSlash,
-                              color: Colors.black26,
+                              color: colors.textSecondary,
                               size: 18,
                             ),
                           ),
@@ -111,7 +114,7 @@ class _LoginView extends StatelessWidget {
                               scale: 0.9,
                               child: Checkbox(
                                 value: viewModel.rememberMe,
-                                activeColor: AppColors.emeraldDeepColor,
+                                activeColor: colors.emeraldDeep,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4),
                                 ),
@@ -119,12 +122,12 @@ class _LoginView extends StatelessWidget {
                                     viewModel.toggleRememberMe(newValue!),
                               ),
                             ),
-                            const Text(
+                            Text(
                               'Remember me',
                               style: TextStyle(
                                 fontFamily: 'PlusJakartaSans',
                                 fontSize: 13,
-                                color: Colors.black54,
+                                color: colors.textSecondary,
                               ),
                             ),
                             const Spacer(),
@@ -137,13 +140,13 @@ class _LoginView extends StatelessWidget {
                                   ),
                                 );
                               },
-                              child: const Text(
+                              child: Text(
                                 'Forgot password?',
                                 style: TextStyle(
                                   fontFamily: 'PlusJakartaSans',
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.emeraldDeepColor,
+                                  color: colors.emeraldDeep,
                                 ),
                               ),
                             ),
@@ -161,11 +164,11 @@ class _LoginView extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
+                            Text(
                               "Don't have an account? ",
                               style: TextStyle(
                                 fontFamily: 'PlusJakartaSans',
-                                color: Colors.black54,
+                                color: colors.textSecondary,
                               ),
                             ),
                             InkWell(
@@ -177,12 +180,12 @@ class _LoginView extends StatelessWidget {
                                   ),
                                 );
                               },
-                              child: const Text(
+                              child: Text(
                                 'Sign up',
                                 style: TextStyle(
                                   fontFamily: 'PlusJakartaSans',
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.emeraldDeepColor,
+                                  color: colors.emeraldDeep,
                                 ),
                               ),
                             ),

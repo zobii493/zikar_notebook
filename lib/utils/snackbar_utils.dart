@@ -52,16 +52,13 @@ class TopSnackBar extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(.15),
+              color: Colors.black.withValues(alpha: 0.15),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -69,14 +66,14 @@ class TopSnackBar extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.black),
+            Icon(icon, color: Colors.white),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 message,
                 style: const TextStyle(
                   fontFamily: 'PlusJakartaSans',
-                  color: Colors.black,
+                  color: Colors.white,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   decoration: TextDecoration.none,

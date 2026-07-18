@@ -8,11 +8,9 @@ class ProfileViewModel extends ChangeNotifier {
   String? username;
   String? email;
   String selectedAvatarId = kAvatarOptions.first.asset;
-  ThemeMode themeMode = ThemeMode.system;
   bool isLoading = true;
 
   static const _kAvatarKey = 'profile_avatar_id';
-  static const _kThemeKey = 'app_theme_mode';
   static const _kUsernameKey = 'username';
 
   AvatarOption get selectedAvatar => kAvatarOptions.firstWhere(
@@ -35,8 +33,6 @@ class ProfileViewModel extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     selectedAvatarId = prefs.getString(_kAvatarKey) ?? kAvatarOptions.first.asset;
     username = prefs.getString(_kUsernameKey);
-    final themeStr = prefs.getString(_kThemeKey) ?? 'system';
-    themeMode = _themeModeFromString(themeStr);
   }
 
   Future<void> _fetchFirebaseUser() async {
@@ -85,36 +81,6 @@ class ProfileViewModel extends ChangeNotifier {
       } catch (e) {
         debugPrint('ProfileViewModel: failed to sync avatar -> $e');
       }
-    }
-  }
-
-  Future<void> setThemeMode(ThemeMode mode) async {
-    themeMode = mode;
-    notifyListeners();
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_kThemeKey, _themeModeToString(mode));
-  }
-
-  ThemeMode _themeModeFromString(String value) {
-    switch (value) {
-      case 'light':
-        return ThemeMode.light;
-      case 'dark':
-        return ThemeMode.dark;
-      default:
-        return ThemeMode.system;
-    }
-  }
-
-  String _themeModeToString(ThemeMode mode) {
-    switch (mode) {
-      case ThemeMode.light:
-        return 'light';
-      case ThemeMode.dark:
-        return 'dark';
-      case ThemeMode.system:
-        return 'system';
     }
   }
 

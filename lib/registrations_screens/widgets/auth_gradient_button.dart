@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/app_colors.dart';
+import '../../core/app_theme_colors.dart';
 import '../../utils/responsive.dart';
 
 class AuthGradientButton extends StatelessWidget {
@@ -19,20 +20,21 @@ class AuthGradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return SizedBox(
       width: double.infinity,
       height: 58,
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
-          gradient: const LinearGradient(
-            colors: [AppColors.emeraldDeepColor, AppColors.emeraldColor],
+          gradient: LinearGradient(
+            colors: [colors.headerGradientEnd,colors.headerGradientEnd],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.emeraldDeepColor.withOpacity(0.35),
+              color: AppColors.emeraldDeepColor.withValues(alpha: 0.35),
               blurRadius: 14,
               offset: const Offset(0, 6),
             ),
@@ -51,7 +53,7 @@ class AuthGradientButton extends StatelessWidget {
                 height: 24,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.4,
-                  color: Colors.white,
+                  color: AppColors.whiteColor,
                 ),
               )
                   : Text(
@@ -60,7 +62,7 @@ class AuthGradientButton extends StatelessWidget {
                   fontSize: context.responsiveFont(18),
                   fontFamily: 'PlusJakartaSans',
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: AppColors.whiteColor,
                 ),
               ),
             ),

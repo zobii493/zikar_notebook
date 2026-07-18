@@ -5,7 +5,7 @@ import 'package:naqashbandi_shazli/registrations_screens/widgets/auth_outlined_b
 import 'package:naqashbandi_shazli/registrations_screens/widgets/gradient_crosshatch_background.dart';
 import 'package:naqashbandi_shazli/registrations_screens/widgets/loading_overlay.dart';
 import 'package:provider/provider.dart';
-import '../core/app_colors.dart';
+import '../core/app_theme_colors.dart';
 import '../utils/responsive.dart';
 import '../viewmodel/auth_viewmodels/welcome_viewmodel.dart';
 import 'signup.dart';
@@ -45,13 +45,14 @@ class _WelcomeView extends StatelessWidget {
     final isLoading = context.watch<WelcomeViewModel>().isLoading;
     final headerHeight = context.responsiveHeight(0.16).clamp(90.0, 160.0);
     final sidePadding = context.horizontalPadding.horizontal / 2;
+    final colors = context.appColors;
 
     return Scaffold(
-      backgroundColor: AppColors.ivoryColor,
+      backgroundColor: colors.background,
       body: Stack(
         clipBehavior: Clip.none,
         children: [
-          // ===== Header =====
+          // Header
           Positioned(
             top: 0,
             left: 0,
@@ -60,7 +61,6 @@ class _WelcomeView extends StatelessWidget {
             child: const GradientCrosshatchBackground(darkenBottom: true),
           ),
 
-          // ===== Signature badge (half in / half out of header) =====
           Positioned(
             top: headerHeight - 34,
             left: 0,
@@ -88,7 +88,7 @@ class _WelcomeView extends StatelessWidget {
                           fontSize: context.responsiveFont(40),
                           fontWeight: FontWeight.bold,
                           fontFamily: 'AutourOne',
-                          color: AppColors.emeraldDeepColor,
+                          color: colors.headingPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -96,7 +96,7 @@ class _WelcomeView extends StatelessWidget {
                         height: 3,
                         width: 56,
                         decoration: BoxDecoration(
-                          color: AppColors.antiqueGoldColor,
+                          color: colors.gold,
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
@@ -107,7 +107,7 @@ class _WelcomeView extends StatelessWidget {
                           fontSize: context.responsiveFont(15),
                           fontFamily: 'PlusJakartaSans',
                           fontWeight: FontWeight.w500,
-                          color: Colors.black54,
+                          color: colors.textSecondary,
                         ),
                       ),
                       SizedBox(height: context.responsiveHeight(0.03)),
@@ -135,7 +135,7 @@ class _WelcomeView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: context.responsiveFont(12),
                           fontFamily: 'PlusJakartaSans',
-                          color: Colors.black38,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -157,21 +157,22 @@ class _SignatureBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Container(
       width: 68,
       height: 68,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.ivoryColor,
-        border: Border.all(color: AppColors.antiqueGoldColor, width: 2),
+        color: colors.background,
+        border: Border.all(color: colors.gold, width: 2),
         boxShadow: const [
           BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4)),
         ],
       ),
-      child: const Center(
+      child: Center(
         child: FaIcon(
           FontAwesomeIcons.solidMoon,
-          color: AppColors.emeraldDeepColor,
+          color: colors.emeraldDeep,
           size: 28,
         ),
       ),
@@ -179,28 +180,25 @@ class _SignatureBadge extends StatelessWidget {
   }
 }
 
-/// ==========================================================
-/// Elegant Hadith card about the virtue of Dhikr.
-/// Source verified: Sahih al-Bukhari 6407 (also Sahih Muslim 779),
-/// narrated by Abu Musa (may Allah be pleased with him).
-/// ==========================================================
+
 class _HadithCard extends StatelessWidget {
   const _HadithCard();
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 26),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: AppColors.emeraldDeepColor.withOpacity(0.08),
+          color: colors.emeraldDeep.withValues(alpha: 0.08),
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.emeraldDeepColor.withOpacity(0.08),
+            color: colors.emeraldDeep.withValues(alpha: 0.08),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -210,7 +208,7 @@ class _HadithCard extends StatelessWidget {
         children: [
           FaIcon(
             FontAwesomeIcons.quoteRight,
-            color: AppColors.antiqueGoldColor.withOpacity(0.5),
+            color: colors.gold.withValues(alpha: 0.5),
             size: 22,
           ),
           const SizedBox(height: 14),
@@ -222,7 +220,7 @@ class _HadithCard extends StatelessWidget {
               fontSize: context.responsiveFont(20),
               height: 1.9,
               fontWeight: FontWeight.w600,
-              color: AppColors.emeraldDeepColor,
+              color: colors.headingPrimary,
               fontFamily: 'Amiri',
             ),
           ),
@@ -230,7 +228,7 @@ class _HadithCard extends StatelessWidget {
           Container(
             height: 1,
             width: 50,
-            color: AppColors.antiqueGoldColor.withOpacity(0.5),
+            color: colors.gold.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
@@ -242,7 +240,7 @@ class _HadithCard extends StatelessWidget {
               fontSize: context.responsiveFont(14.5),
               fontStyle: FontStyle.italic,
               fontFamily: 'PlusJakartaSans',
-              color: Colors.black87,
+              color: colors.textPrimary,
               height: 1.5,
             ),
           ),
@@ -250,7 +248,7 @@ class _HadithCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(
-              color: AppColors.antiqueGoldColor.withOpacity(0.12),
+              color: colors.gold.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -259,7 +257,7 @@ class _HadithCard extends StatelessWidget {
                 fontSize: context.responsiveFont(12),
                 fontFamily: 'PlusJakartaSans',
                 fontWeight: FontWeight.w600,
-                color: AppColors.antiqueGoldColor,
+                color: colors.gold,
                 letterSpacing: 0.4,
               ),
             ),
